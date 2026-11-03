@@ -19,6 +19,7 @@
   /* Buttons: wide-tracked capitals, like the current CPadel store. */
   .button,
   .button-secondary,
+  .button-custom,
   button.button,
   .shopify-payment-button__button--unbranded {
     letter-spacing: 0.22em;
@@ -36,7 +37,7 @@
   }
 
   /* Primary buttons deepen to the strap's oxblood on hover. */
-  .button:not(.button-secondary):hover {
+  .button:not(.button-secondary):not(.button-unstyled):hover {
     background-color: var(--cpadel-oxblood);
     border-color: var(--cpadel-oxblood);
   }

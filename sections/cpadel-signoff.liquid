@@ -37,6 +37,17 @@
     {%- if section.settings.strapline != blank -%}
       <p class="cpadel-signoff__strapline">{{ section.settings.strapline }}</p>
     {%- endif -%}
+
+    {%- if section.settings.show_social -%}
+      <div class="cpadel-signoff__social">
+        {%- render 'cpadel-social-links',
+          facebook: section.settings.facebook_url,
+          instagram: section.settings.instagram_url,
+          tiktok: section.settings.tiktok_url,
+          label: section.settings.social_label
+        -%}
+      </div>
+    {%- endif -%}
   </div>
 </div>
 
@@ -55,6 +66,11 @@
   .cpadel-signoff--cream {
     background: #f4eee6;
     color: #6b1e24;
+    --cpadel-social-hover-icon: #f4eee6;
+  }
+
+  .cpadel-signoff__social {
+    margin-top: clamp(0.75rem, 2vw, 1.5rem);
   }
 
   .cpadel-signoff__inner {
@@ -119,6 +135,38 @@
       "id": "strapline",
       "label": "Strapline",
       "default": "Crafted for the court"
+    },
+    {
+      "type": "header",
+      "content": "Social links"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social links",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "social_label",
+      "label": "Label",
+      "default": "Follow us"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook",
+      "info": "Left blank, the icon shows as a placeholder that goes nowhere."
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok"
     }
   ],
   "presets": [

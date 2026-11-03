@@ -1,0 +1,585 @@
+{%- comment -%}
+  CPadel contact: a two-column contact page. On the left, a brand panel over
+  the court photo with the heading, a short intro, what people can ask about
+  (topic blocks), the store's email and the social links. On the right, the
+  Shopify contact form with visible labels and a topic picker built from the
+  same topic blocks. Stacks on phones, photo panel first.
+{%- endcomment -%}
+
+{%- liquid
+  assign form_id = section.id | prepend: 'CpadelContact-'
+  assign contact_email = section.settings.email | default: shop.email
+-%}
+
+<div class="cpadel-contact">
+  <div class="cpadel-contact__grid">
+    <aside class="cpadel-contact__panel">
+      <picture class="cpadel-contact__photo" aria-hidden="true">
+        <source media="(max-width: 749px)" srcset="{{ 'cpadel-court-sun-1200.jpg' | asset_url }}">
+        <img src="{{ 'cpadel-court-sun-2048.jpg' | asset_url }}" alt="" width="2048" height="1365" loading="eager">
+      </picture>
+
+      <div class="cpadel-contact__panel-inner">
+        <img
+          class="cpadel-contact__emblem"
+          src="{{ 'cpadel-emblem-cream.png' | asset_url }}"
+          alt=""
+          width="226"
+          height="192"
+        >
+
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="cpadel-contact__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h1 class="cpadel-contact__heading">{{ section.settings.heading | default: page.title }}</h1>
+        {%- if section.settings.intro != blank -%}
+          <div class="cpadel-contact__intro">{{ section.settings.intro }}</div>
+        {%- endif -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <ul class="cpadel-contact__topics" role="list">
+            {%- for block in section.blocks -%}
+              <li class="cpadel-contact__topic" {{ block.shopify_attributes }}>
+                <span class="cpadel-contact__topic-index">{{ forloop.index | prepend: '0' }}</span>
+                <div>
+                  <h2 class="cpadel-contact__topic-title">{{ block.settings.title }}</h2>
+                  {%- if block.settings.text != blank -%}
+                    <p class="cpadel-contact__topic-text">{{ block.settings.text }}</p>
+                  {%- endif -%}
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+
+        <div class="cpadel-contact__details">
+          {%- if contact_email != blank -%}
+            <p class="cpadel-contact__detail">
+              <span class="cpadel-contact__detail-label">Email</span>
+              <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>
+            </p>
+          {%- endif -%}
+          {%- if section.settings.response_note != blank -%}
+            <p class="cpadel-contact__detail">
+              <span class="cpadel-contact__detail-label">Replies</span>
+              <span>{{ section.settings.response_note }}</span>
+            </p>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_social -%}
+          <div class="cpadel-contact__social">
+            {%- render 'cpadel-social-links',
+              facebook: section.settings.facebook_url,
+              instagram: section.settings.instagram_url,
+              tiktok: section.settings.tiktok_url,
+              label: 'Follow us'
+            -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </aside>
+
+    <div class="cpadel-contact__form-wrap">
+      {%- if section.settings.form_heading != blank -%}
+        <h2 class="cpadel-contact__form-heading">{{ section.settings.form_heading }}</h2>
+      {%- endif -%}
+      {%- if page.content != blank -%}
+        <div class="cpadel-contact__page-content rte">{{ page.content }}</div>
+      {%- endif -%}
+
+      {%- form 'contact', id: form_id, class: 'cpadel-contact__form' -%}
+        <input type="hidden" name="contact[id]" value="{{ form_id }}">
+
+        {%- liquid
+          assign form_matches = false
+          if form.id == form_id or form.id == blank
+            assign form_matches = true
+          endif
+        -%}
+
+        {%- if form.posted_successfully? and form_matches -%}
+          <div class="cpadel-contact__notice cpadel-contact__notice--success" tabindex="-1" autofocus>
+            <strong>Thank you.</strong> Your message is on its way to us and we'll be in touch soon.
+          </div>
+        {%- elsif form.errors and form_matches -%}
+          <div class="cpadel-contact__notice cpadel-contact__notice--error" tabindex="-1" autofocus>
+            {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+          </div>
+        {%- endif -%}
+
+        <div class="cpadel-contact__row">
+          <div class="cpadel-contact__field">
+            <label for="{{ form_id }}-name">Name</label>
+            <input
+              type="text"
+              id="{{ form_id }}-name"
+              name="contact[name]"
+              autocomplete="name"
+              value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+            >
+          </div>
+          <div class="cpadel-contact__field">
+            <label for="{{ form_id }}-email">Email <span aria-hidden="true">*</span></label>
+            <input
+              type="email"
+              id="{{ form_id }}-email"
+              name="contact[email]"
+              autocomplete="email"
+              spellcheck="false"
+              autocapitalize="off"
+              required
+              aria-required="true"
+              value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            >
+          </div>
+        </div>
+
+        <div class="cpadel-contact__row">
+          <div class="cpadel-contact__field">
+            <label for="{{ form_id }}-phone">Phone <span class="cpadel-contact__optional">(optional)</span></label>
+            <input
+              type="tel"
+              id="{{ form_id }}-phone"
+              name="contact[phone]"
+              autocomplete="tel"
+              value="{{ form.phone }}"
+            >
+          </div>
+          {%- if section.blocks.size > 0 -%}
+            <div class="cpadel-contact__field">
+              <label for="{{ form_id }}-topic">What's it about?</label>
+              <div class="cpadel-contact__select">
+                <select id="{{ form_id }}-topic" name="contact[topic]">
+                  {%- for block in section.blocks -%}
+                    <option value="{{ block.settings.title | escape }}">{{ block.settings.title }}</option>
+                  {%- endfor -%}
+                  <option value="Something else">Something else</option>
+                </select>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="cpadel-contact__field">
+          <label for="{{ form_id }}-body">Message</label>
+          <textarea id="{{ form_id }}-body" name="contact[body]" rows="6">{{ form.body }}</textarea>
+        </div>
+
+        <button type="submit" class="button cpadel-contact__submit" data-magnetic>
+          {{ section.settings.button_label | default: 'Send message' }}
+        </button>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .cpadel-contact {
+    padding: clamp(1rem, 3vw, 2.5rem) clamp(1rem, 4vw, 3rem) clamp(3rem, 7vw, 6rem);
+    background: linear-gradient(#f4eee6, #ece2d5);
+  }
+
+  .cpadel-contact__grid {
+    display: grid;
+    max-width: 80rem;
+    margin-inline: auto;
+    background: #fbf7f1;
+    box-shadow: 0 30px 80px -40px rgb(43 22 24 / 0.45);
+  }
+
+  @media screen and (min-width: 990px) {
+    .cpadel-contact__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      min-height: 46rem;
+    }
+  }
+
+  /* Brand panel over the court photo. */
+  .cpadel-contact__panel {
+    position: relative;
+    overflow: hidden;
+    color: #f4eee6;
+    background: #3f1b19;
+  }
+
+  .cpadel-contact__photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 50%;
+  }
+
+  .cpadel-contact__panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgb(63 27 25 / 0.55) 0%, rgb(107 30 36 / 0.88) 45%, rgb(63 27 25 / 0.96) 100%);
+  }
+
+  .cpadel-contact__panel-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    height: 100%;
+    padding: clamp(2rem, 5vw, 4rem);
+  }
+
+  .cpadel-contact__emblem {
+    width: 3.25rem;
+    height: auto;
+  }
+
+  .cpadel-contact__eyebrow {
+    margin: 0.5rem 0 0;
+    font-family: var(--font-subheading--family);
+    font-size: 0.75rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .cpadel-contact__heading {
+    margin: 0;
+    color: inherit;
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    line-height: 1.05;
+  }
+
+  .cpadel-contact__intro p {
+    margin: 0;
+    max-width: 30rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  .cpadel-contact__topics {
+    display: grid;
+    gap: 1rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cpadel-contact__topic {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgb(244 238 230 / 0.25);
+  }
+
+  .cpadel-contact__topic-index {
+    font-family: var(--font-heading--family);
+    font-size: 1.25rem;
+    line-height: 1;
+    color: #c9a784;
+  }
+
+  .cpadel-contact__topic-title {
+    margin: 0;
+    color: inherit;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-contact__topic-text {
+    margin: 0.3rem 0 0;
+    font-size: 0.9375rem;
+    opacity: 0.8;
+  }
+
+  .cpadel-contact__details {
+    display: grid;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+  }
+
+  .cpadel-contact__detail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+  }
+
+  .cpadel-contact__detail-label {
+    min-width: 4.5rem;
+    font-family: var(--font-subheading--family);
+    font-size: 0.75rem;
+    letter-spacing: 0.24em;
+    line-height: 1.9;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .cpadel-contact__detail a {
+    color: inherit;
+    text-underline-offset: 0.25em;
+  }
+
+  .cpadel-contact__social .cpadel-social {
+    align-items: flex-start;
+  }
+
+  /* Form. */
+  .cpadel-contact__form-wrap {
+    padding: clamp(2rem, 5vw, 4rem);
+  }
+
+  .cpadel-contact__form-heading {
+    margin: 0 0 0.75rem;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+  }
+
+  .cpadel-contact__page-content {
+    margin-bottom: 1.5rem;
+    opacity: 0.85;
+  }
+
+  .cpadel-contact__form {
+    display: grid;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+
+  .cpadel-contact__row {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cpadel-contact__row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .cpadel-contact__field {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .cpadel-contact__field label {
+    font-family: var(--font-subheading--family);
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #2b1618;
+  }
+
+  .cpadel-contact__field label span[aria-hidden] {
+    color: #6b1e24;
+  }
+
+  .cpadel-contact__optional {
+    letter-spacing: 0.05em;
+    text-transform: none;
+    opacity: 0.6;
+  }
+
+  .cpadel-contact__field input,
+  .cpadel-contact__field textarea,
+  .cpadel-contact__field select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #d8c7b3;
+    border-radius: 0;
+    background: #fffdf9;
+    color: #2b1618;
+    font: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .cpadel-contact__field textarea {
+    min-height: 10rem;
+    resize: vertical;
+  }
+
+  .cpadel-contact__field input:focus,
+  .cpadel-contact__field textarea:focus,
+  .cpadel-contact__field select:focus {
+    outline: none;
+    border-color: #6b1e24;
+    box-shadow: 0 0 0 3px rgb(107 30 36 / 0.15);
+  }
+
+  .cpadel-contact__select {
+    position: relative;
+  }
+
+  .cpadel-contact__select select {
+    appearance: none;
+    padding-right: 2.5rem;
+    cursor: pointer;
+  }
+
+  .cpadel-contact__select::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1.1rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1.5px solid #6b1e24;
+    border-bottom: 1.5px solid #6b1e24;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+
+  .cpadel-contact .cpadel-contact__submit {
+    justify-self: start;
+    min-width: 14rem;
+    margin-top: 0.5rem;
+  }
+
+  .cpadel-contact__notice {
+    padding: 1rem 1.25rem;
+    border-left: 3px solid #6b1e24;
+    background: rgb(107 30 36 / 0.06);
+  }
+
+  .cpadel-contact__notice--error {
+    border-color: #b42318;
+    background: rgb(180 35 24 / 0.06);
+  }
+
+  @media screen and (max-width: 989px) {
+    .cpadel-contact__panel-inner {
+      min-height: 0;
+    }
+
+    .cpadel-contact__details {
+      margin-top: 0.5rem;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .cpadel-contact .cpadel-contact__submit {
+      justify-self: stretch;
+      width: 100%;
+      min-width: 0;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel contact",
+  "tag": "section",
+  "class": "cpadel-contact-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above heading",
+      "default": "Contact"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "info": "Leave blank to use the page title.",
+      "default": "Let's talk padel"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "Intro",
+      "default": "<p>Questions about a racket, an order or kitting out your club? Send us a note and a member of the CPadel team will get back to you.</p>"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email shown",
+      "info": "Leave blank to use the store's contact email."
+    },
+    {
+      "type": "text",
+      "id": "response_note",
+      "label": "Reply time note",
+      "default": "Monday to Friday"
+    },
+    {
+      "type": "header",
+      "content": "Form"
+    },
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "Form heading",
+      "default": "Send us a message"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Send message"
+    },
+    {
+      "type": "header",
+      "content": "Social links"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social",
+      "label": "Show social links",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook",
+      "info": "Left blank, the icon shows as a placeholder that goes nowhere."
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "topic",
+      "name": "Topic",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Rackets"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel contact",
+      "blocks": [
+        { "type": "topic", "settings": { "title": "Rackets", "text": "Which racket suits your game, weight and balance." } },
+        { "type": "topic", "settings": { "title": "Orders and delivery", "text": "Tracking, returns and anything about an order." } },
+        { "type": "topic", "settings": { "title": "Clubs and coaches", "text": "Team kit and orders for clubs and academies." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

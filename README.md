@@ -51,6 +51,11 @@ GSAP 3.15 (`assets/gsap.min.js`, `assets/ScrollTrigger.min.js`, standard no-char
 - `<cpadel-showcase>` (`sections/cpadel-racket-showcase.liquid`): pinned for ~3 screens; background cream to burgundy to ink, a giant outlined word slides past, the racket cut-out rises and turns in 3D with a light sheen, leader lines draw to the spec callouts (positions set per block in % of the racket), then the racket steps aside for the price card. Phones show one spec at a time under the racket.
 - `<cpadel-statement>` (`sections/cpadel-statement.liquid`): the closing brand statement. A faint plan of a padel court draws its lines as the section scrolls in, and the statement fills in word by word from pale to ink (SplitText words, scrubbed). Italic words are burgundy. No pinning, so the page ends calmly after the showcase.
 - `[data-magnetic]`: buttons pull towards a mouse pointer.
+
+## Other CPadel sections
+
+- `sections/cpadel-contact.liquid` (used by `templates/page.contact.json`): two-column contact page. A brand panel over the court photo (heading, intro, topic blocks, email, social links) and a contact form with visible labels and a topic picker built from the same blocks.
+- `snippets/cpadel-social-links.liquid`: Facebook, Instagram and TikTok icon buttons, used in the sign-off band and on the contact page. Blank links show as placeholders (`href="#"`); fill them in the theme editor (CPadel sign-off and CPadel contact sections).
 - `assets/cpadel-racket-cutout.webp` is the Control Series photo with its background removed (rembg, isnet-general-use). `assets/cpadel-emblem-{c,crown}-*.png` are the emblem split for the intro.
 - GSAP's SplitText (`assets/SplitText.min.js`) is bundled alongside GSAP and ScrollTrigger.
 

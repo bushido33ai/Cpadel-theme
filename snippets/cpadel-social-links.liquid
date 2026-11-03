@@ -1,0 +1,107 @@
+{%- comment -%}
+  CPadel social links: Facebook, Instagram and TikTok as round icon buttons.
+  A link left blank shows as a placeholder (href="#") so the row can be seen
+  before the accounts are set up; fill in the links in the theme editor.
+
+  Accepts:
+  - facebook {string}, instagram {string}, tiktok {string}: profile URLs
+  - label {string}: optional heading above the icons, e.g. "Follow us"
+
+  Usage:
+  {% render 'cpadel-social-links', facebook: section.settings.facebook_url, instagram: section.settings.instagram_url, tiktok: section.settings.tiktok_url, label: 'Follow us' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign platforms = 'facebook,instagram,tiktok' | split: ','
+-%}
+<div class="cpadel-social">
+  {%- if label != blank -%}
+    <p class="cpadel-social__label">{{ label }}</p>
+  {%- endif -%}
+  <ul class="cpadel-social__list" role="list">
+    {%- for platform in platforms -%}
+      {%- liquid
+        case platform
+          when 'facebook'
+            assign url = facebook
+            assign name = 'Facebook'
+          when 'instagram'
+            assign url = instagram
+            assign name = 'Instagram'
+          when 'tiktok'
+            assign url = tiktok
+            assign name = 'TikTok'
+        endcase
+      -%}
+      <li>
+        <a
+          class="cpadel-social__link"
+          {% if url != blank %}
+            href="{{ url }}" target="_blank" rel="noopener noreferrer"
+          {% else %}
+            href="#" data-placeholder
+          {% endif %}
+          aria-label="{{ shop.name | escape }} on {{ name }}"
+        >
+          <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            {%- render 'icon', icon: platform -%}
+          </svg>
+        </a>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% stylesheet %}
+  .cpadel-social {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .cpadel-social__label {
+    margin: 0;
+    font-family: var(--font-subheading--family);
+    font-size: 0.75rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .cpadel-social__list {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cpadel-social__link {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid currentcolor;
+    border-radius: 50%;
+    color: inherit;
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+
+  .cpadel-social__link svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: currentcolor;
+  }
+
+  .cpadel-social__link:hover,
+  .cpadel-social__link:focus-visible {
+    background-color: currentcolor;
+    transform: translateY(-2px);
+  }
+
+  .cpadel-social__link:hover svg,
+  .cpadel-social__link:focus-visible svg {
+    fill: var(--cpadel-social-hover-icon, #6b1e24);
+  }
+{% endstylesheet %}
