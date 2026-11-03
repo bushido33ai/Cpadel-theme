@@ -54,7 +54,7 @@ GSAP 3.15 (`assets/gsap.min.js`, `assets/ScrollTrigger.min.js`, standard no-char
 
 ## Other CPadel sections
 
-- `sections/cpadel-story.liquid` (homepage, after the racket line-up): "Our story", who is behind CPadel. Court photo with a "North West England" label beside the story text and three pillars, on a burgundy band. Has `id="our-story"`; the hero's "Our story" button jumps to it by default. Photo and pillars wipe in via `<cpadel-reveal>`.
+- `sections/cpadel-story.liquid` (homepage, after the racket line-up): "Our story", who is behind CPadel. Court photo (optional label) beside the story text and up to three pillars, on a burgundy band. Has `id="our-story"`; the hero's "Our story" button jumps to it by default. Photo and pillars wipe in via `<cpadel-reveal>`.
 - `sections/cpadel-contact.liquid` (used by `templates/page.contact.json`): two-column contact page. A brand panel over the court photo (heading, intro, topic blocks, email, social links) and a contact form with visible labels and a topic picker built from the same blocks.
 - `snippets/cpadel-social-links.liquid`: Facebook, Instagram and TikTok icon buttons, used in the sign-off band and on the contact page. Blank links show as placeholders (`href="#"`); fill them in the theme editor (CPadel sign-off and CPadel contact sections).
 - `assets/cpadel-racket-cutout.webp` is the Control Series photo with its background removed (rembg, isnet-general-use). `assets/cpadel-emblem-{c,crown}-*.png` are the emblem split for the intro.

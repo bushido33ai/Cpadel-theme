@@ -120,13 +120,6 @@
     "cpadel_story": {
       "type": "cpadel-story",
       "blocks": {
-        "pillar_1": {
-          "type": "pillar",
-          "settings": {
-            "title": "North West roots",
-            "text": "Started by a group of friends from the North West of England who play padel every week."
-          }
-        },
         "pillar_2": {
           "type": "pillar",
           "settings": {
@@ -143,7 +136,6 @@
         }
       },
       "block_order": [
-        "pillar_1",
         "pillar_2",
         "pillar_3"
       ],
@@ -152,7 +144,7 @@
         "heading": "Made by players from the North West",
         "text": "<p>CPadel is a team of padel fanatics from the North West of England. We fell for the game on our local courts, and we've been hooked ever since.</p><p>The more we played, the more we cared about what was in our hands. We believe <strong>a great racket shouldn't be reserved for the pros</strong>, so we set out to make rackets with the quality the game deserves, at a price that real, everyday players can reach.</p><p>Every CPadel racket is made by players, for players. We hope you enjoy playing with it as much as we enjoyed making it.</p>",
         "signature": "The CPadel team",
-        "tag": "North West England",
+        "tag": "",
         "image_alt": "A padel court in the evening sun",
         "anchor": "our-story"
       }

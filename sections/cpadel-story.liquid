@@ -48,7 +48,7 @@
       {%- endif -%}
 
       {%- if section.blocks.size > 0 -%}
-        <ul class="cpadel-story__pillars" role="list">
+        <ul class="cpadel-story__pillars" role="list" style="--pillars: {{ section.blocks.size }};">
           {%- for block in section.blocks -%}
             <li class="cpadel-story__pillar" data-reveal-item {{ block.shopify_attributes }}>
               <span class="cpadel-story__pillar-index">{{ forloop.index | prepend: '0' }}</span>
@@ -187,7 +187,7 @@
 
   @media screen and (min-width: 750px) {
     .cpadel-story__pillars {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(var(--pillars, 3), minmax(0, 1fr));
     }
   }
 
@@ -256,7 +256,7 @@
       "type": "text",
       "id": "tag",
       "label": "Label on the photo",
-      "default": "North West England"
+      "info": "Optional short label shown on the photo."
     },
     {
       "type": "text",
