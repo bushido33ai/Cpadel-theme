@@ -1,0 +1,176 @@
+{%- comment -%}
+  CPadel statement: a short brand statement set large, over a faint plan of a
+  padel court. As the section scrolls past, the court's lines draw themselves
+  and the statement fills in word by word, from pale to ink. Words in italics
+  (the editor's I button) are set in burgundy.
+  Motion lives in assets/cpadel-motion.js (<cpadel-statement>).
+
+  Court units: 10 per metre, the court is 200 x 100. Service lines are 6.95 m
+  from the net (x = 30.5 and 169.5).
+{%- endcomment -%}
+
+<cpadel-statement class="cpadel-statement">
+  <svg
+    class="cpadel-statement__court"
+    viewBox="-2 -2 204 104"
+    preserveAspectRatio="xMidYMid meet"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <g fill="none">
+      <path data-statement-line pathLength="1" d="M0 0 H200 V100 H0 Z" />
+      <path data-statement-line pathLength="1" d="M100 -2 V102" class="cpadel-statement__net" />
+      <path data-statement-line pathLength="1" d="M30.5 0 V100" />
+      <path data-statement-line pathLength="1" d="M169.5 0 V100" />
+      <path data-statement-line pathLength="1" d="M30.5 50 H169.5" />
+    </g>
+  </svg>
+
+  <div class="cpadel-statement__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="cpadel-statement__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.statement != blank -%}
+      <div class="cpadel-statement__text" data-statement-text>{{ section.settings.statement }}</div>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a
+        data-magnetic
+        data-statement-cta
+        class="button cpadel-statement__button"
+        href="{{ section.settings.button_link | default: routes.all_products_collection_url }}"
+      >
+        {{- section.settings.button_label -}}
+      </a>
+    {%- endif -%}
+  </div>
+</cpadel-statement>
+
+{% stylesheet %}
+  .cpadel-statement {
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    min-height: min(52rem, 100svh);
+    padding-block: clamp(5rem, 12vw, 10rem);
+    padding-inline: clamp(1.25rem, 6vw, 6rem);
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 50%, rgb(255 250 243 / 0.85), rgb(255 250 243 / 0) 70%),
+      linear-gradient(#f4eee6, #ece2d5);
+  }
+
+  .cpadel-statement__court {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: min(88%, 72rem);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    /* Fade the lines out behind the words so they never cross the text. */
+    -webkit-mask-image: radial-gradient(ellipse 42% 46% at 50% 50%, transparent 55%, #000 100%);
+    mask-image: radial-gradient(ellipse 42% 46% at 50% 50%, transparent 55%, #000 100%);
+  }
+
+  .cpadel-statement__court path {
+    stroke: rgb(107 30 36 / 0.22);
+    stroke-width: 0.35;
+  }
+
+  .cpadel-statement__court .cpadel-statement__net {
+    stroke-dasharray: 0.6 0.9;
+  }
+
+  .cpadel-statement__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 56rem;
+    text-align: center;
+  }
+
+  .cpadel-statement__eyebrow {
+    margin: 0 0 clamp(1.25rem, 3vw, 2rem);
+    color: var(--cpadel-burgundy, #6b1e24);
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-statement__text p {
+    margin: 0;
+    color: #2b1618;
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.875rem, 4.4vw, 3.75rem);
+    font-weight: 400;
+    line-height: 1.18;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  .cpadel-statement__text p + p {
+    margin-top: 0.6em;
+  }
+
+  .cpadel-statement__text em {
+    color: var(--cpadel-burgundy, #6b1e24);
+    font-style: italic;
+  }
+
+  /* Words split for the scroll fill stay inline, so punctuation never wraps on its own. */
+  .cpadel-statement__text .cpadel-statement__word {
+    display: inline !important;
+  }
+
+  @media screen and (max-width: 749px) {
+    .cpadel-statement__court {
+      display: none;
+    }
+  }
+
+  .cpadel-statement .cpadel-statement__button {
+    margin-top: clamp(2rem, 5vw, 3rem);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel statement",
+  "tag": "section",
+  "class": "cpadel-statement-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above statement",
+      "default": "On court"
+    },
+    {
+      "type": "richtext",
+      "id": "statement",
+      "label": "Statement",
+      "info": "Keep it to one or two sentences. Words in italics are shown in burgundy.",
+      "default": "<p>Every CPadel racket starts with one idea: <em>control</em>. Placement over power, touch at the net, and comfort through the longest points.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop the collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel statement"
+    }
+  ]
+}
+{% endschema %}

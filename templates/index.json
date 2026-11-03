@@ -60,40 +60,14 @@
         "duration": 40
       }
     },
-    "cpadel_rally": {
-      "type": "cpadel-court-rally",
+    "cpadel_statement": {
+      "type": "cpadel-statement",
       "settings": {
         "eyebrow": "On court",
-        "heading": "Built for every rally"
-      },
-      "blocks": {
-        "spec_1": {
-          "type": "spec",
-          "settings": {
-            "title": "3K Carbon",
-            "text": "A woven carbon face for a crisp, responsive feel."
-          }
-        },
-        "spec_2": {
-          "type": "spec",
-          "settings": {
-            "title": "Pro Core",
-            "text": "A core tuned for comfort through long rallies."
-          }
-        },
-        "spec_3": {
-          "type": "spec",
-          "settings": {
-            "title": "Control Series",
-            "text": "Shaped for placement and touch at the net."
-          }
-        }
-      },
-      "block_order": [
-        "spec_1",
-        "spec_2",
-        "spec_3"
-      ]
+        "statement": "<p>Every CPadel racket starts with one idea: <em>control</em>. Placement over power, touch at the net, and comfort through the longest points.</p>",
+        "button_label": "Shop the collection",
+        "button_link": ""
+      }
     },
     "cpadel_showcase": {
       "type": "cpadel-racket-showcase",
@@ -149,6 +123,6 @@
     "cpadel_band",
     "cpadel_showcase",
     "cpadel_lineup",
-    "cpadel_rally"
+    "cpadel_statement"
   ]
 }
