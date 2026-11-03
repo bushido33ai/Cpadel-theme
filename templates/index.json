@@ -13,7 +13,9 @@
       "type": "cpadel-hero",
       "settings": {
         "show_emblem": false,
-        "play_intro": true
+        "play_intro": true,
+        "eyebrow": "Premium padel rackets",
+        "show_racket": true
       }
     },
     "cpadel_lineup": {

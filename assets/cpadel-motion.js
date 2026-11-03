@@ -230,6 +230,9 @@
       const heading = q('[data-hero-heading]');
       const content = q('[data-hero-content]');
       const fades = this.querySelectorAll('[data-hero-fade]');
+      const racketBox = q('[data-hero-racket]');
+      const racketFloat = q('[data-hero-racket-float]');
+      const racketShadow = q('[data-hero-racket-shadow]');
       const intro = html.classList.contains('cpadel-intro-pending') ? q('[data-intro]') : null;
       if (intro) window.cpadelIntroStarted = true;
 
@@ -244,6 +247,8 @@
       if (chars) gsap.set(chars, { yPercent: 115 });
       else if (heading) gsap.set(heading, { autoAlpha: 0, y: 40 });
       if (image) gsap.set(image, { scale: 1.25, transformOrigin: '50% 60%' });
+      if (racketFloat) gsap.set(racketFloat, { yPercent: 35, rotation: -24, autoAlpha: 0 });
+      if (racketShadow) gsap.set(racketShadow, { autoAlpha: 0, scaleX: 0.4 });
 
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
@@ -285,10 +290,27 @@
       else if (heading) tl.to(heading, { autoAlpha: 1, y: 0, duration: 1 }, 'reveal+=0.15');
       tl.to(fades, { autoAlpha: 1, y: 0, duration: 1, stagger: 0.12 }, 'reveal+=0.45');
 
+      // The racket swings up onto the court, then floats gently.
+      if (racketFloat) {
+        tl.to(racketFloat, { yPercent: 0, rotation: -7, autoAlpha: 1, duration: 1.6, ease: 'power3.out' }, 'reveal+=0.25');
+        if (racketShadow) tl.to(racketShadow, { autoAlpha: 1, scaleX: 1, duration: 1.6, ease: 'power3.out' }, 'reveal+=0.25');
+        tl.add(() => {
+          gsap.to(racketFloat, { y: -14, rotation: -5, duration: 3.2, ease: 'sine.inOut', repeat: -1, yoyo: true });
+          if (racketShadow) gsap.to(racketShadow, { scaleX: 0.86, autoAlpha: 0.7, duration: 3.2, ease: 'sine.inOut', repeat: -1, yoyo: true });
+        });
+      }
+
       // Scroll: the court drifts behind, the copy lifts away.
       if (media) {
         gsap.to(media, {
           yPercent: 18,
+          ease: 'none',
+          scrollTrigger: { trigger: this, start: 'top top', end: 'bottom top', scrub: true },
+        });
+      }
+      if (racketBox) {
+        gsap.to(racketBox, {
+          yPercent: -22,
           ease: 'none',
           scrollTrigger: { trigger: this, start: 'top top', end: 'bottom top', scrub: true },
         });

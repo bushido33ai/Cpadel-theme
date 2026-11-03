@@ -1,6 +1,6 @@
 {%- comment -%}
-  CPadel hero: a full-bleed photo of a sunlit padel court with a headline,
-  a short line of copy and up to two buttons.
+  CPadel hero: a full-bleed photo of a sunlit padel court with a racket
+  standing on it, a headline, a short line of copy and up to two buttons.
 
   If no image is chosen in the theme editor, it falls back to the court
   photo bundled with the theme (assets/cpadel-court-sun-*.jpg).
@@ -87,6 +87,34 @@
     {%- endif -%}
   </div>
 
+  {%- if section.settings.show_racket -%}
+    {%- liquid
+      if section.settings.racket_image != blank
+        assign hero_racket_src = section.settings.racket_image | image_url: width: 1200
+        assign hero_racket_w = section.settings.racket_image.width
+        assign hero_racket_h = section.settings.racket_image.height
+      else
+        assign hero_racket_src = 'cpadel-racket-cutout.webp' | asset_url
+        assign hero_racket_w = 697
+        assign hero_racket_h = 1308
+      endif
+    -%}
+    <div class="cpadel-hero__racket" data-hero-racket style="--hero-racket-ratio: {{ hero_racket_w }} / {{ hero_racket_h }};">
+      <span class="cpadel-hero__racket-shadow" data-hero-racket-shadow aria-hidden="true"></span>
+      <div class="cpadel-hero__racket-float" data-hero-racket-float>
+        <img
+          class="cpadel-hero__racket-image"
+          src="{{ hero_racket_src }}"
+          alt="{{ section.settings.racket_alt | escape }}"
+          width="{{ hero_racket_w }}"
+          height="{{ hero_racket_h }}"
+          loading="eager"
+          fetchpriority="high"
+        >
+      </div>
+    </div>
+  {%- endif -%}
+
   <div class="cpadel-hero__content">
     <div class="cpadel-hero__inner" data-hero-content>
       {%- if section.settings.show_emblem -%}
@@ -139,16 +167,21 @@
     background: #c9a784;
   }
 
+  /*
+    Heights are set from the window, less the announcement bar above the
+    hero (Horizon's --header-group-height), so the copy and buttons sit on
+    the first screen. The photo fills whatever height that gives.
+  */
   .cpadel-hero--full {
-    min-height: 100svh;
+    min-height: max(calc(100svh - var(--header-group-height, 0px)), 34rem);
   }
 
   .cpadel-hero--large {
-    min-height: 82svh;
+    min-height: max(calc(82svh - var(--header-group-height, 0px)), 30rem);
   }
 
   .cpadel-hero--medium {
-    min-height: 64svh;
+    min-height: max(calc(64svh - var(--header-group-height, 0px)), 26rem);
   }
 
   .cpadel-hero__media,
@@ -157,7 +190,8 @@
   }
 
   .cpadel-hero__media {
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: -1;
   }
 
@@ -201,7 +235,9 @@
   }
 
   .cpadel-hero__inner {
-    max-width: 40rem;
+    position: relative;
+    z-index: 1;
+    max-width: 46rem;
     text-shadow: 0 1px 24px rgb(43 22 24 / 0.35);
   }
 
@@ -234,8 +270,8 @@
     color: inherit;
     font-family: var(--font-heading--family);
     font-weight: var(--font-heading--weight);
-    font-size: clamp(2.75rem, 7vw, 6rem);
-    line-height: 1;
+    font-size: clamp(2.5rem, 5.2vw, 4.75rem);
+    line-height: 1.02;
     letter-spacing: 0.12em;
     text-transform: uppercase;
   }
@@ -275,6 +311,93 @@
     background: #fffaf3;
     color: var(--cpadel-ink, #2b1618);
     border-color: #fffaf3;
+  }
+
+  /*
+    The racket stands on the court, to the right of the copy. Desktop: tall,
+    on the right. Phones: smaller, top right, above the copy.
+  */
+  .cpadel-hero__racket {
+    position: absolute;
+    right: clamp(1.5rem, 9vw, 11rem);
+    bottom: clamp(2.5rem, 8vh, 5.5rem);
+    z-index: 0;
+    height: min(72svh, 44rem);
+    aspect-ratio: var(--hero-racket-ratio);
+    pointer-events: none;
+  }
+
+  .cpadel-hero__racket-float {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-7deg);
+    transform-origin: 50% 90%;
+  }
+
+  .cpadel-hero__racket-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 28px 34px rgb(43 22 24 / 0.45));
+  }
+
+  .cpadel-hero__racket-shadow {
+    position: absolute;
+    left: 50%;
+    bottom: -3%;
+    width: 85%;
+    height: 7%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(43 22 24 / 0.55), rgb(43 22 24 / 0));
+    transform: translateX(-50%);
+  }
+
+  @media screen and (max-width: 989px) {
+    .cpadel-hero__racket {
+      right: clamp(1rem, 5vw, 3rem);
+      height: min(58svh, 34rem);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .cpadel-hero__racket {
+      top: calc(var(--header-group-height, 0px) + var(--header-height, 60px) + 0.75rem);
+      right: 7vw;
+      bottom: auto;
+      height: min(24svh, 13rem);
+    }
+
+    .cpadel-hero__content {
+      padding-block: 2rem 2.25rem;
+    }
+
+    .cpadel-hero__heading {
+      font-size: clamp(2.25rem, 10vw, 2.75rem);
+    }
+
+    .cpadel-hero__text {
+      margin-top: 0.9rem;
+      font-size: 1rem;
+    }
+
+    .cpadel-hero__buttons {
+      flex-wrap: nowrap;
+      gap: 0.6rem;
+      margin-top: 1.5rem;
+    }
+
+    .cpadel-hero .cpadel-hero__button {
+      flex: 1 1 auto;
+      padding-inline: 1rem;
+      letter-spacing: 0.14em;
+      white-space: nowrap;
+    }
+
+    .cpadel-hero__racket-shadow {
+      display: none;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -453,6 +576,24 @@
     },
     {
       "type": "checkbox",
+      "id": "show_racket",
+      "label": "Show racket",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "racket_image",
+      "label": "Racket cut-out",
+      "info": "A PNG or WebP with a transparent background. Leave empty to use the bundled Control Series cut-out."
+    },
+    {
+      "type": "text",
+      "id": "racket_alt",
+      "label": "Racket description",
+      "default": "The CPadel Control Series padel racket"
+    },
+    {
+      "type": "checkbox",
       "id": "show_emblem",
       "label": "Show crowned C emblem",
       "default": true
@@ -461,7 +602,7 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Small line above heading",
-      "default": "Control Series · 3K Carbon"
+      "default": "Premium padel rackets"
     },
     {
       "type": "text",
