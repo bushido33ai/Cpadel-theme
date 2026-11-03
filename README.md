@@ -20,6 +20,18 @@ Taken from CPadel's current store (Prestige theme, password page at cpadel.uk):
 - **Shape:** square corners everywhere, gold primary buttons, uppercase wide-tracked button labels.
 - Theme-wide settings live in `config/settings_data.json`. Extra brand CSS lives in `snippets/cpadel-brand.liquid`, rendered from `layout/theme.liquid`.
 
+## Logos
+
+From CPadel's current store (`CPadel_Logo.png`, `Cpadel_text_copy.png`), cropped and recoloured from gold to flat brand colours:
+
+- `assets/cpadel-wordmark-{burgundy,cream}.png`: the CPADEL wordmark. Also in the store's Files and set as the theme logo (burgundy) and inverse logo (cream).
+- `assets/cpadel-emblem-{burgundy,cream}.png`: the crowned C. Used in the hero and the sign-off band.
+- `assets/cpadel-favicon.png`: burgundy emblem on cream, set as the favicon.
+
+The emblem source is only 226 px wide, so ask CPadel for a vector (SVG/AI/EPS) or a large PNG before using it bigger than about 120 px.
+
+`sections/cpadel-signoff.liquid` is a brand band (emblem, large wordmark, strapline) placed above the footer.
+
 ## Homepage hero
 
 `sections/cpadel-hero.liquid` is a full-screen photo hero (eyebrow, heading, text, two buttons). With no image chosen it uses the bundled sunlit court photo, `assets/cpadel-court-sun-2048.jpg` (desktop) and `assets/cpadel-court-sun-1200.jpg` (mobile crop). The photo is AI-generated for CPadel (no people, logos or text) and is also in the dev store's Files as `cpadel-court-sun.png`. Swap in a real photoshoot image from the theme editor when one exists.

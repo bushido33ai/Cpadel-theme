@@ -49,6 +49,15 @@
 
   <div class="cpadel-hero__content">
     <div class="cpadel-hero__inner">
+      {%- if section.settings.show_emblem -%}
+        <img
+          class="cpadel-hero__emblem"
+          src="{{ 'cpadel-emblem-cream.png' | asset_url }}"
+          alt=""
+          width="226"
+          height="192"
+        >
+      {%- endif -%}
       {%- if section.settings.eyebrow != blank -%}
         <p class="cpadel-hero__eyebrow">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
@@ -156,6 +165,18 @@
   }
 
   .cpadel-hero--center .cpadel-hero__inner {
+    margin-inline: auto;
+  }
+
+  .cpadel-hero__emblem {
+    display: block;
+    width: clamp(3rem, 5vw, 4.5rem);
+    height: auto;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 2px 16px rgb(43 22 24 / 0.35));
+  }
+
+  .cpadel-hero--center .cpadel-hero__emblem {
     margin-inline: auto;
   }
 
@@ -310,6 +331,12 @@
         { "value": "center", "label": "Centre" }
       ],
       "default": "bottom-left"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_emblem",
+      "label": "Show crowned C emblem",
+      "default": true
     },
     {
       "type": "text",

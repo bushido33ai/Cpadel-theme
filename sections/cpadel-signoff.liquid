@@ -1,0 +1,130 @@
+{%- comment -%}
+  CPadel sign-off: a brand band with the crowned C emblem, the CPADEL
+  wordmark and a short strapline. Sits above the footer.
+{%- endcomment -%}
+
+{%- liquid
+  # Marks are cream on the burgundy band and burgundy on the cream band.
+  assign mark_colour = 'cream'
+  if section.settings.style == 'cream'
+    assign mark_colour = 'burgundy'
+  endif
+-%}
+
+<div class="cpadel-signoff cpadel-signoff--{{ section.settings.style }}">
+  <div class="cpadel-signoff__inner">
+    {%- if section.settings.show_emblem -%}
+      <img
+        class="cpadel-signoff__emblem"
+        src="{{ 'cpadel-emblem-' | append: mark_colour | append: '.png' | asset_url }}"
+        alt=""
+        width="226"
+        height="192"
+        loading="lazy"
+      >
+    {%- endif -%}
+
+    <a class="cpadel-signoff__wordmark" href="{{ routes.root_url }}">
+      <img
+        src="{{ 'cpadel-wordmark-' | append: mark_colour | append: '.png' | asset_url }}"
+        alt="{{ shop.name | escape }}"
+        width="765"
+        height="77"
+        loading="lazy"
+      >
+    </a>
+
+    {%- if section.settings.strapline != blank -%}
+      <p class="cpadel-signoff__strapline">{{ section.settings.strapline }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .cpadel-signoff {
+    padding-block: clamp(3.5rem, 9vw, 7rem);
+    padding-inline: clamp(1.25rem, 6vw, 6rem);
+    text-align: center;
+  }
+
+  .cpadel-signoff--burgundy {
+    background: #6b1e24;
+    color: #f4eee6;
+  }
+
+  .cpadel-signoff--cream {
+    background: #f4eee6;
+    color: #6b1e24;
+  }
+
+  .cpadel-signoff__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    max-width: 60rem;
+    margin-inline: auto;
+  }
+
+  .cpadel-signoff__emblem {
+    width: clamp(3.5rem, 7vw, 5.5rem);
+    height: auto;
+  }
+
+  .cpadel-signoff__wordmark {
+    display: block;
+    width: min(100%, 40rem);
+  }
+
+  .cpadel-signoff__wordmark img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .cpadel-signoff__strapline {
+    margin: 0;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel sign-off",
+  "tag": "section",
+  "class": "cpadel-signoff-section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Colours",
+      "options": [
+        { "value": "burgundy", "label": "Cream logo on burgundy" },
+        { "value": "cream", "label": "Burgundy logo on cream" }
+      ],
+      "default": "burgundy"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_emblem",
+      "label": "Show crowned C emblem",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "strapline",
+      "label": "Strapline",
+      "default": "Crafted for the court"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel sign-off"
+    }
+  ]
+}
+{% endschema %}

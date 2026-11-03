@@ -229,9 +229,14 @@
         "padding-block-start": 12,
         "padding-block-end": 16
       }
+    },
+    "cpadel_signoff": {
+      "type": "cpadel-signoff",
+      "settings": {}
     }
   },
   "order": [
+    "cpadel_signoff",
     "footer",
     "utilities"
   ]
