@@ -15,7 +15,7 @@ Custom Shopify theme for **CPadel** (padel rackets, https://www.cpadel.uk), buil
 
 Taken from CPadel's current store (Prestige theme, password page at cpadel.uk):
 
-- **Colours:** night `#0D0D0D` background, ivory `#F5F5F3` text, gold `#C8A45D` accent (`color1`), panels `#1A1A1A` (`color2`), lines `#2E2E2C` (`color3`).
+- **Colours (from the Control Series racket):** cream `#F4EEE6` background, ink `#2B1618` text, burgundy `#6B1E24` accent and buttons (`color1`), sand `#EADFD0` panels (`color2`), lines `#D8C7B3` (`color3`). Buttons deepen to oxblood `#3F1B19` on hover. (Replaced the earlier black and gold, which came from the pre-launch password page.)
 - **Type:** Cormorant for headings (uppercase, wide tracking), Jost for body text and buttons.
 - **Shape:** square corners everywhere, gold primary buttons, uppercase wide-tracked button labels.
 - Theme-wide settings live in `config/settings_data.json`. Extra brand CSS lives in `snippets/cpadel-brand.liquid`, rendered from `layout/theme.liquid`.

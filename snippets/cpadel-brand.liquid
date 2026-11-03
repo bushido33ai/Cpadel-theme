@@ -1,12 +1,15 @@
 {%- comment -%}
   CPadel brand layer. Loaded after Horizon's theme variables so it can widen
-  heading tracking and add gold details without editing core Horizon files.
+  heading tracking and add burgundy details without editing core Horizon files.
 {%- endcomment -%}
 {% style %}
   :root {
-    --cpadel-gold: {{ settings.color_palette.color1 | default: '#C8A45D' }};
-    --cpadel-night: {{ settings.color_palette.background | default: '#0D0D0D' }};
-    --cpadel-ivory: {{ settings.color_palette.foreground | default: '#F5F5F3' }};
+    /* Colours taken from the CPadel Control Series racket. */
+    --cpadel-burgundy: {{ settings.color_palette.color1 | default: '#6B1E24' }};
+    --cpadel-oxblood: #3F1B19;
+    --cpadel-cream: {{ settings.color_palette.background | default: '#F4EEE6' }};
+    --cpadel-sand: #C9A784;
+    --cpadel-ink: {{ settings.color_palette.foreground | default: '#2B1618' }};
 
     /* The CPadel wordmark is widely spaced; headings follow suit. */
     --letter-spacing--heading-loose: 0.18em;
@@ -21,19 +24,25 @@
     letter-spacing: 0.22em;
   }
 
-  /* Gold hairline focus and link hover. */
+  /* Burgundy focus ring and link hover. */
   :focus-visible {
-    outline-color: var(--cpadel-gold);
+    outline-color: var(--cpadel-burgundy);
   }
 
   .rte a:hover,
   .menu-list__link:hover,
   .footer a:hover {
-    color: var(--cpadel-gold);
+    color: var(--cpadel-burgundy);
+  }
+
+  /* Primary buttons deepen to the strap's oxblood on hover. */
+  .button:not(.button-secondary):hover {
+    background-color: var(--cpadel-oxblood);
+    border-color: var(--cpadel-oxblood);
   }
 
   ::selection {
-    background: var(--cpadel-gold);
-    color: var(--cpadel-night);
+    background: var(--cpadel-burgundy);
+    color: var(--cpadel-cream);
   }
 {% endstyle %}
