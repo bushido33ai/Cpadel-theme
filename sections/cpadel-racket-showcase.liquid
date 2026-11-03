@@ -346,17 +346,54 @@
     color: var(--showcase-ink);
   }
 
-  /* Phones: labels sit in a list under the racket, no leader lines. */
+  /*
+    Phones, static layout: the racket, then the specs as a list under it,
+    then the price card. The box grows with the list (the racket keeps a
+    fixed height), so nothing overlaps.
+  */
   @media screen and (max-width: 749px) {
     .cpadel-showcase__racket-box {
       height: min(52vh, 30rem);
     }
 
+    .cpadel-showcase:not(.is-animated) .cpadel-showcase__stage {
+      gap: 2rem;
+    }
+
+    .cpadel-showcase:not(.is-animated) .cpadel-showcase__racket-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      height: auto;
+      aspect-ratio: auto;
+    }
+
+    .cpadel-showcase:not(.is-animated) .cpadel-showcase__racket {
+      width: auto;
+      height: min(52vh, 30rem);
+      aspect-ratio: var(--racket-ratio);
+    }
+
+    .cpadel-showcase:not(.is-animated) .cpadel-showcase__shadow {
+      display: none;
+    }
+
+    .cpadel-showcase:not(.is-animated) .cpadel-showcase__word {
+      top: 30%;
+    }
+
     .cpadel-showcase__callouts {
       position: static;
       display: grid;
-      gap: 1rem;
+      gap: 1.5rem;
+      width: 100%;
       margin-top: 2rem;
+    }
+
+    .cpadel-showcase:not(.is-animated) .cpadel-showcase__callout {
+      padding-top: 1.25rem;
+      border-top: 1px solid rgb(244 238 230 / 0.18);
     }
 
     .cpadel-showcase__callout {
