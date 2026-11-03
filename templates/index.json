@@ -12,7 +12,8 @@
     "cpadel_hero": {
       "type": "cpadel-hero",
       "settings": {
-        "show_emblem": false
+        "show_emblem": false,
+        "play_intro": true
       }
     },
     "cpadel_lineup": {
@@ -93,11 +94,60 @@
         "spec_2",
         "spec_3"
       ]
+    },
+    "cpadel_showcase": {
+      "type": "cpadel-racket-showcase",
+      "settings": {
+        "product": "cpadel-control-series",
+        "eyebrow": "Introducing",
+        "heading": "The Control Series",
+        "word": "Control",
+        "final_eyebrow": "Available now",
+        "button_label": "Shop the Control Series"
+      },
+      "blocks": {
+        "callout_1": {
+          "type": "callout",
+          "settings": {
+            "title": "3K Carbon",
+            "text": "Woven carbon face for a crisp, responsive strike.",
+            "x": 84,
+            "y": 20,
+            "side": "right"
+          }
+        },
+        "callout_2": {
+          "type": "callout",
+          "settings": {
+            "title": "Pro Core",
+            "text": "Tuned for comfort through long rallies.",
+            "x": 18,
+            "y": 34,
+            "side": "left"
+          }
+        },
+        "callout_3": {
+          "type": "callout",
+          "settings": {
+            "title": "Control Series",
+            "text": "Shaped for placement and touch at the net.",
+            "x": 64,
+            "y": 54,
+            "side": "right"
+          }
+        }
+      },
+      "block_order": [
+        "callout_1",
+        "callout_2",
+        "callout_3"
+      ]
     }
   },
   "order": [
     "cpadel_hero",
     "cpadel_band",
+    "cpadel_showcase",
     "cpadel_lineup",
     "cpadel_rally"
   ]

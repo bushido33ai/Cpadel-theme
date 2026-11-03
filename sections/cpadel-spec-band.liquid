@@ -26,6 +26,7 @@
   {%- endfor -%}
 {%- endcapture -%}
 
+<cpadel-band-motion class="cpadel-band-motion">
 <div
   class="cpadel-band cpadel-band--{{ section.settings.style }}"
   style="--cpadel-band-duration: {{ section.settings.duration }}s;"
@@ -36,6 +37,7 @@
     <div class="cpadel-band__run">{{ run }}</div>
   </div>
 </div>
+</cpadel-band-motion>
 
 {% stylesheet %}
   .cpadel-band {
@@ -62,6 +64,15 @@
     display: flex;
     width: max-content;
     animation: cpadel-band-scroll var(--cpadel-band-duration, 40s) linear infinite;
+  }
+
+  cpadel-band-motion {
+    display: block;
+  }
+
+  /* When GSAP drives the band, the CSS loop steps aside. */
+  .cpadel-band-motion.is-gsap .cpadel-band__track {
+    animation: none;
   }
 
   .cpadel-band:hover .cpadel-band__track {

@@ -1,0 +1,565 @@
+{%- comment -%}
+  CPadel racket showcase: a pinned, scroll-driven reveal of one racket.
+  The racket floats up and turns in 3D in front of a giant outlined word,
+  leader lines draw out to its specs, then the price and a button land.
+  Motion lives in assets/cpadel-motion.js (<cpadel-showcase>).
+
+  Without JS, or with reduced motion, it is a static layout: racket,
+  specs and price all visible.
+{%- endcomment -%}
+
+{%- liquid
+  assign showcase_product = section.settings.product
+  if showcase_product == blank
+    assign showcase_product = collections.all.products.first
+  endif
+
+  if section.settings.racket_image != blank
+    assign racket_src = section.settings.racket_image | image_url: width: 1400
+    assign racket_w = section.settings.racket_image.width
+    assign racket_h = section.settings.racket_image.height
+  else
+    assign racket_src = 'cpadel-racket-cutout.webp' | asset_url
+    assign racket_w = 697
+    assign racket_h = 1308
+  endif
+-%}
+
+<cpadel-showcase class="cpadel-showcase" style="--racket-ratio: {{ racket_w }} / {{ racket_h }};">
+  <div class="cpadel-showcase__stage" data-stage>
+    <div class="cpadel-showcase__bg" data-bg aria-hidden="true"></div>
+    <div class="cpadel-showcase__glow" data-glow aria-hidden="true"></div>
+
+    <p class="cpadel-showcase__word" data-word aria-hidden="true">{{ section.settings.word }}</p>
+
+    <div class="cpadel-showcase__intro" data-intro-copy>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="cpadel-showcase__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="cpadel-showcase__heading">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="cpadel-showcase__racket-box" data-racket-box>
+      <div class="cpadel-showcase__shadow" data-shadow aria-hidden="true"></div>
+
+      <div class="cpadel-showcase__racket" data-racket>
+        <img
+          class="cpadel-showcase__racket-image"
+          src="{{ racket_src }}"
+          alt="{{ showcase_product.title | default: 'CPadel racket' | escape }}"
+          width="{{ racket_w }}"
+          height="{{ racket_h }}"
+          loading="lazy"
+        >
+        <span
+          class="cpadel-showcase__sheen"
+          data-sheen
+          aria-hidden="true"
+          style="-webkit-mask-image: url('{{ racket_src }}'); mask-image: url('{{ racket_src }}');"
+        ></span>
+      </div>
+
+      <ul class="cpadel-showcase__callouts" role="list">
+        {%- for block in section.blocks -%}
+          <li
+            class="cpadel-showcase__callout cpadel-showcase__callout--{{ block.settings.side }}"
+            style="--x: {{ block.settings.x }}%; --y: {{ block.settings.y }}%;"
+            data-callout
+            {{ block.shopify_attributes }}
+          >
+            <span class="cpadel-showcase__dot" data-callout-dot></span>
+            <span class="cpadel-showcase__line" data-callout-line></span>
+            <span class="cpadel-showcase__label" data-callout-label>
+              <span class="cpadel-showcase__label-index">{{ forloop.index | prepend: '0' }}</span>
+              <span class="cpadel-showcase__label-title">{{ block.settings.title }}</span>
+              {%- if block.settings.text != blank -%}
+                <span class="cpadel-showcase__label-text">{{ block.settings.text }}</span>
+              {%- endif -%}
+            </span>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    <div class="cpadel-showcase__final" data-final>
+      {%- if showcase_product != blank -%}
+        <p class="cpadel-showcase__eyebrow">{{ section.settings.final_eyebrow }}</p>
+        <h3 class="cpadel-showcase__title">{{ showcase_product.title }}</h3>
+        <p class="cpadel-showcase__price">{{ showcase_product.price | money }}</p>
+        <a data-magnetic class="button cpadel-showcase__button" href="{{ showcase_product.url }}">
+          {{- section.settings.button_label -}}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</cpadel-showcase>
+
+{% stylesheet %}
+  cpadel-showcase {
+    display: block;
+    --showcase-ink: #2b1618;
+    --showcase-cream: #f4eee6;
+  }
+
+  /*
+    Static layout (no JS, or reduced motion): a dark panel with the racket,
+    callouts beside it and the price underneath.
+  */
+  .cpadel-showcase__stage {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 2.5rem;
+    overflow: hidden;
+    padding: clamp(4rem, 10vw, 7rem) clamp(1.25rem, 6vw, 6rem);
+    color: var(--showcase-cream);
+    background: var(--showcase-ink);
+    isolation: isolate;
+  }
+
+  .cpadel-showcase__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: var(--showcase-ink);
+  }
+
+  .cpadel-showcase__glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: -1;
+    width: min(70vw, 60rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(107 30 36 / 0.75) 0%, rgb(107 30 36 / 0) 65%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .cpadel-showcase__word {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    z-index: -1;
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-size: clamp(7rem, 26vw, 26rem);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: transparent;
+    -webkit-text-stroke: 1px rgb(244 238 230 / 0.22);
+    transform: translateY(-50%);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .cpadel-showcase__intro {
+    text-align: center;
+  }
+
+  .cpadel-showcase__eyebrow {
+    margin: 0 0 0.75rem;
+    color: #c9a784;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-showcase__heading {
+    margin: 0;
+    color: inherit;
+  }
+
+  .cpadel-showcase__racket-box {
+    position: relative;
+    height: min(68vh, 44rem);
+    aspect-ratio: var(--racket-ratio);
+    perspective: 1400px;
+  }
+
+  .cpadel-showcase__racket {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .cpadel-showcase__racket-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.45));
+  }
+
+  .cpadel-showcase__sheen {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      rgb(255 250 243 / 0) 35%,
+      rgb(255 250 243 / 0.55) 48%,
+      rgb(255 250 243 / 0) 60%
+    );
+    background-size: 300% 100%;
+    background-position: 120% 0;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+  }
+
+  .cpadel-showcase__shadow {
+    position: absolute;
+    left: 50%;
+    bottom: -4%;
+    width: 80%;
+    height: 6%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0));
+    transform: translateX(-50%);
+  }
+
+  .cpadel-showcase__callouts {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+  }
+
+  .cpadel-showcase__callout {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+  }
+
+  .cpadel-showcase__dot {
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #dfe85a;
+    box-shadow: 0 0 0 4px rgb(223 232 90 / 0.25);
+  }
+
+  .cpadel-showcase__line {
+    position: absolute;
+    top: 0;
+    width: clamp(4rem, 14vw, 12rem);
+    height: 1px;
+    background: rgb(244 238 230 / 0.7);
+  }
+
+  .cpadel-showcase__callout--right .cpadel-showcase__line {
+    left: 8px;
+    transform-origin: left center;
+  }
+
+  .cpadel-showcase__callout--left .cpadel-showcase__line {
+    right: 8px;
+    transform-origin: right center;
+  }
+
+  .cpadel-showcase__label {
+    position: absolute;
+    top: 0;
+    display: grid;
+    gap: 0.3rem;
+    width: max-content;
+    max-width: 15rem;
+    transform: translateY(-50%);
+  }
+
+  .cpadel-showcase__callout--right .cpadel-showcase__label {
+    left: calc(clamp(4rem, 14vw, 12rem) + 1.25rem);
+  }
+
+  .cpadel-showcase__callout--left .cpadel-showcase__label {
+    right: calc(clamp(4rem, 14vw, 12rem) + 1.25rem);
+    text-align: right;
+  }
+
+  .cpadel-showcase__label-index {
+    color: #dfe85a;
+    font-family: var(--font-heading--family);
+    font-size: 1.125rem;
+  }
+
+  .cpadel-showcase__label-title {
+    font-family: var(--font-subheading--family);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-showcase__label-text {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    opacity: 0.75;
+  }
+
+  .cpadel-showcase__final {
+    text-align: center;
+  }
+
+  .cpadel-showcase__title {
+    margin: 0;
+    color: inherit;
+    font-family: var(--font-heading--family);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .cpadel-showcase__price {
+    margin: 0.75rem 0 1.75rem;
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
+  }
+
+  .cpadel-showcase .cpadel-showcase__button {
+    background: var(--showcase-cream);
+    border-color: var(--showcase-cream);
+    color: var(--showcase-ink);
+  }
+
+  .cpadel-showcase .cpadel-showcase__button:hover {
+    background: #dfe85a;
+    border-color: #dfe85a;
+    color: var(--showcase-ink);
+  }
+
+  /* Phones: labels sit in a list under the racket, no leader lines. */
+  @media screen and (max-width: 749px) {
+    .cpadel-showcase__racket-box {
+      height: min(52vh, 30rem);
+    }
+
+    .cpadel-showcase__callouts {
+      position: static;
+      display: grid;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .cpadel-showcase__callout {
+      position: static;
+    }
+
+    .cpadel-showcase__dot,
+    .cpadel-showcase__line {
+      display: none;
+    }
+
+    .cpadel-showcase__label,
+    .cpadel-showcase__callout--left .cpadel-showcase__label {
+      position: static;
+      max-width: none;
+      text-align: center;
+      transform: none;
+    }
+  }
+
+  /*
+    Animated layout (set by cpadel-motion.js): a full-screen pinned stage
+    where everything is layered and choreographed by scroll.
+  */
+  .cpadel-showcase.is-animated .cpadel-showcase__stage {
+    display: block;
+    height: 100svh;
+    padding: 0;
+    background: transparent;
+  }
+
+  .cpadel-showcase.is-animated .cpadel-showcase__bg {
+    background: var(--showcase-cream);
+  }
+
+  .cpadel-showcase.is-animated .cpadel-showcase__intro {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(90vw, 40rem);
+    color: var(--showcase-ink);
+    transform: translate(-50%, -50%);
+  }
+
+  .cpadel-showcase.is-animated .cpadel-showcase__intro .cpadel-showcase__eyebrow {
+    color: #6b1e24;
+  }
+
+  .cpadel-showcase.is-animated .cpadel-showcase__racket-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .cpadel-showcase.is-animated .cpadel-showcase__final {
+    position: absolute;
+    top: 50%;
+    right: clamp(1.25rem, 10vw, 10rem);
+    width: min(36vw, 28rem);
+    text-align: left;
+    transform: translateY(-50%);
+  }
+
+  @media screen and (max-width: 749px) {
+    .cpadel-showcase.is-animated .cpadel-showcase__racket-box {
+      top: 44%;
+    }
+
+    .cpadel-showcase.is-animated .cpadel-showcase__callouts {
+      position: absolute;
+      top: calc(100% + 1.5rem);
+      left: 50%;
+      width: 86vw;
+      margin: 0;
+      transform: translateX(-50%);
+    }
+
+    .cpadel-showcase.is-animated .cpadel-showcase__callout {
+      position: absolute;
+      inset: 0 0 auto;
+    }
+
+    .cpadel-showcase.is-animated .cpadel-showcase__final {
+      top: auto;
+      right: auto;
+      bottom: 7svh;
+      left: 50%;
+      width: 86vw;
+      text-align: center;
+      transform: translateX(-50%);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel racket showcase",
+  "tag": "section",
+  "class": "cpadel-showcase-section",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Racket",
+      "info": "Leave empty to use the first product."
+    },
+    {
+      "type": "image_picker",
+      "id": "racket_image",
+      "label": "Racket cut-out",
+      "info": "A PNG or WebP with a transparent background. Leave empty to use the bundled Control Series cut-out."
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above heading",
+      "default": "Introducing"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Control Series"
+    },
+    {
+      "type": "text",
+      "id": "word",
+      "label": "Giant background word",
+      "default": "Control"
+    },
+    {
+      "type": "text",
+      "id": "final_eyebrow",
+      "label": "Small line above the price",
+      "default": "Available now"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop the Control Series"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "callout",
+      "name": "Spec callout",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "3K Carbon"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "range",
+          "id": "x",
+          "label": "Point across the racket",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50
+        },
+        {
+          "type": "range",
+          "id": "y",
+          "label": "Point down the racket",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 30
+        },
+        {
+          "type": "select",
+          "id": "side",
+          "label": "Label side",
+          "options": [
+            { "value": "right", "label": "Right" },
+            { "value": "left", "label": "Left" }
+          ],
+          "default": "right"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel racket showcase",
+      "blocks": [
+        { "type": "callout", "settings": { "title": "3K Carbon", "text": "Woven carbon face for a crisp, responsive strike.", "x": 84, "y": 20, "side": "right" } },
+        { "type": "callout", "settings": { "title": "Pro Core", "text": "Tuned for comfort through long rallies.", "x": 18, "y": 34, "side": "left" } },
+        { "type": "callout", "settings": { "title": "Control Series", "text": "Shaped for placement and touch at the net.", "x": 64, "y": 54, "side": "right" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

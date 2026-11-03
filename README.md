@@ -47,7 +47,12 @@ GSAP 3.15 (`assets/gsap.min.js`, `assets/ScrollTrigger.min.js`, standard no-char
 
 - `<cpadel-court-rally>` (used by `sections/cpadel-court-rally.liquid`): a to-scale top-down padel court that draws itself on scroll, then a ball (with shadow and trail) plays a rally with bounces and glass rebounds. Rally shots are the `RALLY` array, in court units (10 per metre, court 200 x 100).
 - `<cpadel-reveal>`: children with `data-reveal-item` rise in as they scroll into view (used on the racket line-up).
-- `sections/cpadel-spec-band.liquid`: CSS-only scrolling band of words with spinning padel balls.
+- `sections/cpadel-spec-band.liquid`: scrolling band of words with spinning padel balls. CSS loop by default; `<cpadel-band-motion>` takes over to make it speed up, lean and reverse with scroll velocity.
+- `<cpadel-hero-motion>` (in `sections/cpadel-hero.liquid`): opening sequence (crowned C sweeps in, crown drops on, wordmark wipes in, cream then burgundy curtains lift), then the headline rises letter by letter (SplitText) and the court settles. Plays once per browser session, never with reduced motion or in the theme editor; click or any key skips it; a 4 s failsafe removes the overlay if the script never starts. Scroll parallax on the photo and copy.
+- `<cpadel-showcase>` (`sections/cpadel-racket-showcase.liquid`): pinned for ~3 screens; background cream to burgundy to ink, a giant outlined word slides past, the racket cut-out rises and turns in 3D with a light sheen, leader lines draw to the spec callouts (positions set per block in % of the racket), then the racket steps aside for the price card. Phones show one spec at a time under the racket.
+- `[data-magnetic]`: buttons pull towards a mouse pointer.
+- `assets/cpadel-racket-cutout.webp` is the Control Series photo with its background removed (rembg, isnet-general-use). `assets/cpadel-emblem-{c,crown}-*.png` are the emblem split for the intro.
+- GSAP's SplitText (`assets/SplitText.min.js`) is bundled alongside GSAP and ScrollTrigger.
 
 Everything is visible and static without JavaScript, and `prefers-reduced-motion` turns the motion off.
 
