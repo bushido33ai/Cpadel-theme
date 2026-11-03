@@ -9,8 +9,8 @@
  */
 {
   "current": {
-    "logo_height": 20,
-    "logo_height_mobile": 14,
+    "logo_height": 44,
+    "logo_height_mobile": 30,
     "type_body_font": "jost_n4",
     "type_subheading_font": "jost_n5",
     "type_heading_font": "cormorant_n5",
@@ -117,8 +117,8 @@
     "type_letter_spacing_h5": "heading-loose",
     "type_case_h6": "uppercase",
     "type_letter_spacing_h6": "heading-loose",
-    "logo": "shopify://shop_images/cpadel-wordmark-burgundy.png",
-    "logo_inverse": "shopify://shop_images/cpadel-wordmark-cream.png",
+    "logo": "shopify://shop_images/cpadel-lockup-burgundy.png",
+    "logo_inverse": "shopify://shop_images/cpadel-lockup-cream.png",
     "favicon": "shopify://shop_images/cpadel-favicon.png"
   },
   "presets": {

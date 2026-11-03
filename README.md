@@ -26,6 +26,7 @@ From CPadel's current store (`CPadel_Logo.png`, `Cpadel_text_copy.png`), cropped
 
 - `assets/cpadel-wordmark-{burgundy,cream}.png`: the CPADEL wordmark. Also in the store's Files and set as the theme logo (burgundy) and inverse logo (cream).
 - `assets/cpadel-emblem-{burgundy,cream}.png`: the crowned C. Used in the hero and the sign-off band.
+- `assets/cpadel-lockup-{burgundy,cream}.png`: crowned C beside the wordmark. Also in the store's Files and set as the theme logo (burgundy) and inverse logo (cream), 44 px tall on desktop and 30 px on mobile.
 - `assets/cpadel-favicon.png`: burgundy emblem on cream, set as the favicon.
 
 The emblem source is only 226 px wide, so ask CPadel for a vector (SVG/AI/EPS) or a large PNG before using it bigger than about 120 px.

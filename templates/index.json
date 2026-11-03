@@ -11,7 +11,9 @@
   "sections": {
     "cpadel_hero": {
       "type": "cpadel-hero",
-      "settings": {}
+      "settings": {
+        "show_emblem": false
+      }
     },
     "cpadel_lineup": {
       "type": "cpadel-racket-lineup",
