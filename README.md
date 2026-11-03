@@ -20,6 +20,10 @@ Taken from CPadel's current store (Prestige theme, password page at cpadel.uk):
 - **Shape:** square corners everywhere, gold primary buttons, uppercase wide-tracked button labels.
 - Theme-wide settings live in `config/settings_data.json`. Extra brand CSS lives in `snippets/cpadel-brand.liquid`, rendered from `layout/theme.liquid`.
 
+## Homepage hero
+
+`sections/cpadel-hero.liquid` is a full-screen photo hero (eyebrow, heading, text, two buttons). With no image chosen it uses the bundled sunlit court photo, `assets/cpadel-court-sun-2048.jpg` (desktop) and `assets/cpadel-court-sun-1200.jpg` (mobile crop). The photo is AI-generated for CPadel (no people, logos or text) and is also in the dev store's Files as `cpadel-court-sun.png`. Swap in a real photoshoot image from the theme editor when one exists.
+
 ## Workflow
 
 1. Build and preview against the development store.

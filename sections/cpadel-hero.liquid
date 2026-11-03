@@ -1,0 +1,361 @@
+{%- comment -%}
+  CPadel hero: a full-bleed photo of a sunlit padel court with a headline,
+  a short line of copy and up to two buttons.
+
+  If no image is chosen in the theme editor, it falls back to the court
+  photo bundled with the theme (assets/cpadel-court-sun-*.jpg).
+{%- endcomment -%}
+
+{%- liquid
+  assign heading_tag = 'h1'
+  unless section.index == 1
+    assign heading_tag = 'h2'
+  endunless
+-%}
+
+<section
+  class="cpadel-hero cpadel-hero--{{ section.settings.height }} cpadel-hero--{{ section.settings.text_position }}"
+  style="--cpadel-hero-focus: {{ section.settings.focal_x }}% {{ section.settings.focal_y }}%; --cpadel-hero-shade: {{ section.settings.shade | divided_by: 100.0 }};"
+>
+  <div class="cpadel-hero__media">
+    {%- if section.settings.image != blank -%}
+      {%- assign image_class = 'cpadel-hero__image' -%}
+      {{-
+        section.settings.image
+        | image_url: width: 3200
+        | image_tag:
+          class: image_class,
+          widths: '750, 1100, 1500, 2000, 2600, 3200',
+          sizes: '100vw',
+          loading: 'eager',
+          fetchpriority: 'high',
+          alt: section.settings.image.alt
+      -}}
+    {%- else -%}
+      <picture>
+        <source media="(max-width: 749px)" srcset="{{ 'cpadel-court-sun-1200.jpg' | asset_url }}">
+        <img
+          class="cpadel-hero__image"
+          src="{{ 'cpadel-court-sun-2048.jpg' | asset_url }}"
+          alt="An empty padel court in the afternoon sun"
+          width="2048"
+          height="1152"
+          loading="eager"
+          fetchpriority="high"
+        >
+      </picture>
+    {%- endif -%}
+  </div>
+
+  <div class="cpadel-hero__content">
+    <div class="cpadel-hero__inner">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="cpadel-hero__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <{{ heading_tag }} class="cpadel-hero__heading">{{ section.settings.heading }}</{{ heading_tag }}>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="cpadel-hero__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank or section.settings.button_2_label != blank -%}
+        <div class="cpadel-hero__buttons">
+          {%- if section.settings.button_label != blank -%}
+            <a class="button cpadel-hero__button" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">
+              {{- section.settings.button_label -}}
+            </a>
+          {%- endif -%}
+          {%- if section.settings.button_2_label != blank -%}
+            <a class="button button-secondary cpadel-hero__button cpadel-hero__button--ghost" href="{{ section.settings.button_2_link | default: routes.root_url }}">
+              {{- section.settings.button_2_label -}}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .cpadel-hero {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    isolation: isolate;
+    color: #fffaf3;
+    background: #c9a784;
+  }
+
+  .cpadel-hero--full {
+    min-height: 100svh;
+  }
+
+  .cpadel-hero--large {
+    min-height: 82svh;
+  }
+
+  .cpadel-hero--medium {
+    min-height: 64svh;
+  }
+
+  .cpadel-hero__media,
+  .cpadel-hero__content {
+    grid-area: 1 / 1;
+  }
+
+  .cpadel-hero__media {
+    position: relative;
+    z-index: -1;
+  }
+
+  .cpadel-hero__media picture,
+  .cpadel-hero__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cpadel-hero__image {
+    object-fit: cover;
+    object-position: var(--cpadel-hero-focus, 50% 50%);
+  }
+
+  /* A warm wash from the bottom-left keeps the text legible on bright sun. */
+  .cpadel-hero__media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(
+        to top,
+        rgb(43 22 24 / calc(var(--cpadel-hero-shade) * 1.1)) 0%,
+        rgb(43 22 24 / calc(var(--cpadel-hero-shade) * 0.35)) 45%,
+        rgb(43 22 24 / 0) 75%
+      );
+  }
+
+  .cpadel-hero__content {
+    display: flex;
+    align-items: flex-end;
+    padding-block: clamp(3rem, 10vh, 7rem);
+    padding-inline: clamp(1.25rem, 6vw, 6rem);
+  }
+
+  .cpadel-hero--center .cpadel-hero__content {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .cpadel-hero__inner {
+    max-width: 40rem;
+    text-shadow: 0 1px 24px rgb(43 22 24 / 0.35);
+  }
+
+  .cpadel-hero--center .cpadel-hero__inner {
+    margin-inline: auto;
+  }
+
+  .cpadel-hero__eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-hero__heading {
+    margin: 0;
+    color: inherit;
+    font-family: var(--font-heading--family);
+    font-weight: var(--font-heading--weight);
+    font-size: clamp(2.75rem, 7vw, 6rem);
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-hero__text {
+    margin-top: 1.25rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+
+  .cpadel-hero__text p {
+    margin: 0;
+  }
+
+  .cpadel-hero__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .cpadel-hero--center .cpadel-hero__buttons {
+    justify-content: center;
+  }
+
+  .cpadel-hero__button {
+    text-shadow: none;
+  }
+
+  .cpadel-hero .cpadel-hero__button--ghost {
+    background: transparent;
+    color: #fffaf3;
+    border-color: #fffaf3;
+  }
+
+  .cpadel-hero .cpadel-hero__button--ghost:hover {
+    background: #fffaf3;
+    color: var(--cpadel-ink, #2b1618);
+    border-color: #fffaf3;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cpadel-hero__image {
+      animation: cpadel-hero-settle 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .cpadel-hero__inner {
+      animation: cpadel-hero-rise 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  }
+
+  @keyframes cpadel-hero-settle {
+    from {
+      transform: scale(1.06);
+    }
+
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes cpadel-hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel hero",
+  "tag": "div",
+  "class": "cpadel-hero-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image",
+      "info": "Leave empty to use the sunlit court photo that comes with the theme."
+    },
+    {
+      "type": "range",
+      "id": "focal_x",
+      "label": "Image focus (left to right)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "focal_y",
+      "label": "Image focus (top to bottom)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "shade",
+      "label": "Shade behind text",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 45
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "options": [
+        { "value": "full", "label": "Full screen" },
+        { "value": "large", "label": "Large" },
+        { "value": "medium", "label": "Medium" }
+      ],
+      "default": "full"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "label": "Text position",
+      "options": [
+        { "value": "bottom-left", "label": "Bottom left" },
+        { "value": "center", "label": "Centre" }
+      ],
+      "default": "bottom-left"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above heading",
+      "default": "Control Series · 3K Carbon"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Made for the court"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Padel rackets crafted for control, comfort and long summer sets.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Shop rackets"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Second button label",
+      "default": "Our story"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Second button link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel hero"
+    }
+  ]
+}
+{% endschema %}
