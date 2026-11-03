@@ -1,0 +1,292 @@
+{%- comment -%}
+  CPadel story: who is behind CPadel. A photo of the court on one side, the
+  story and three short pillars on the other, on a burgundy band. The section
+  has id="our-story" so the hero's "Our story" button can jump to it.
+  The photo and pillars wipe in with <cpadel-reveal> (assets/cpadel-motion.js).
+{%- endcomment -%}
+
+<cpadel-reveal class="cpadel-story" id="{{ section.settings.anchor | default: 'our-story' | handleize }}">
+  <img
+    class="cpadel-story__watermark"
+    src="{{ 'cpadel-emblem-c-cream.png' | asset_url }}"
+    alt=""
+    width="226"
+    height="192"
+    loading="lazy"
+    aria-hidden="true"
+  >
+
+  <div class="cpadel-story__grid">
+    <figure class="cpadel-story__media" data-reveal-item>
+      <picture>
+        <source media="(max-width: 749px)" srcset="{{ 'cpadel-court-sun-1200.jpg' | asset_url }}">
+        <img
+          src="{{ 'cpadel-court-sun-2048.jpg' | asset_url }}"
+          alt="{{ section.settings.image_alt | escape }}"
+          width="2048"
+          height="1365"
+          loading="lazy"
+        >
+      </picture>
+      {%- if section.settings.tag != blank -%}
+        <figcaption class="cpadel-story__tag">{{ section.settings.tag }}</figcaption>
+      {%- endif -%}
+    </figure>
+
+    <div class="cpadel-story__content">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="cpadel-story__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="cpadel-story__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="cpadel-story__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+      {%- if section.settings.signature != blank -%}
+        <p class="cpadel-story__signature">{{ section.settings.signature }}</p>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="cpadel-story__pillars" role="list">
+          {%- for block in section.blocks -%}
+            <li class="cpadel-story__pillar" data-reveal-item {{ block.shopify_attributes }}>
+              <span class="cpadel-story__pillar-index">{{ forloop.index | prepend: '0' }}</span>
+              <h3 class="cpadel-story__pillar-title">{{ block.settings.title }}</h3>
+              {%- if block.settings.text != blank -%}
+                <p class="cpadel-story__pillar-text">{{ block.settings.text }}</p>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+</cpadel-reveal>
+
+{% stylesheet %}
+  .cpadel-story {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    padding-block: clamp(4.5rem, 10vw, 8rem);
+    padding-inline: clamp(1.25rem, 6vw, 6rem);
+    background:
+      radial-gradient(ellipse 60% 70% at 85% 20%, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0) 70%),
+      linear-gradient(160deg, #6b1e24, #3f1b19);
+    color: #f4eee6;
+    scroll-margin-top: 4rem;
+  }
+
+  .cpadel-story__watermark {
+    position: absolute;
+    right: -6%;
+    bottom: -12%;
+    width: clamp(18rem, 42vw, 36rem);
+    height: auto;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .cpadel-story__grid {
+    position: relative;
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 5rem);
+    max-width: 80rem;
+    margin-inline: auto;
+    align-items: center;
+  }
+
+  @media screen and (min-width: 990px) {
+    .cpadel-story__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    }
+  }
+
+  .cpadel-story__media {
+    position: relative;
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+  }
+
+  .cpadel-story__media picture {
+    position: absolute;
+    inset: 0;
+  }
+
+  .cpadel-story__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 55% 50%;
+  }
+
+  .cpadel-story__tag {
+    position: absolute;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    padding: 0.6rem 1rem;
+    background: #f4eee6;
+    color: #6b1e24;
+    font-family: var(--font-subheading--family);
+    font-size: 0.75rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-story__eyebrow {
+    margin: 0 0 1rem;
+    color: #c9a784;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-story__heading {
+    margin: 0 0 1.75rem;
+    color: inherit;
+    font-size: clamp(2rem, 4.2vw, 3.5rem);
+    line-height: 1.08;
+  }
+
+  .cpadel-story__text p {
+    margin: 0;
+    max-width: 36rem;
+    font-size: clamp(1rem, 1.3vw, 1.125rem);
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+
+  .cpadel-story__text p + p {
+    margin-top: 1em;
+  }
+
+  .cpadel-story__text strong {
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .cpadel-story__signature {
+    margin: 1.75rem 0 0;
+    color: #c9a784;
+    font-family: var(--font-heading--family);
+    font-size: 1.375rem;
+    font-style: italic;
+  }
+
+  .cpadel-story__pillars {
+    display: grid;
+    gap: 1.5rem;
+    margin: clamp(2.25rem, 5vw, 3.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .cpadel-story__pillars {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .cpadel-story__pillar {
+    padding-top: 1.25rem;
+    border-top: 1px solid rgb(244 238 230 / 0.3);
+  }
+
+  .cpadel-story__pillar-index {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: #c9a784;
+    font-family: var(--font-heading--family);
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .cpadel-story__pillar-title {
+    margin: 0;
+    color: inherit;
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-story__pillar-text {
+    margin: 0.45rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    opacity: 0.8;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel our story",
+  "tag": "section",
+  "class": "cpadel-story-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above heading",
+      "default": "Our story"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Made by players from the North West"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Story"
+    },
+    {
+      "type": "text",
+      "id": "signature",
+      "label": "Sign-off",
+      "default": "The CPadel team"
+    },
+    {
+      "type": "text",
+      "id": "tag",
+      "label": "Label on the photo",
+      "default": "North West England"
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Photo description",
+      "default": "A padel court in the evening sun"
+    },
+    {
+      "type": "text",
+      "id": "anchor",
+      "label": "Link name",
+      "info": "Buttons can jump to this section with #our-story.",
+      "default": "our-story"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "limit": 3,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Made by players" },
+        { "type": "text", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel our story"
+    }
+  ]
+}
+{% endschema %}

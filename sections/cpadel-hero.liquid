@@ -118,7 +118,7 @@
             </a>
           {%- endif -%}
           {%- if section.settings.button_2_label != blank -%}
-            <a data-magnetic class="button button-secondary cpadel-hero__button cpadel-hero__button--ghost" href="{{ section.settings.button_2_link | default: routes.root_url }}">
+            <a data-magnetic class="button button-secondary cpadel-hero__button cpadel-hero__button--ghost" href="{{ section.settings.button_2_link | default: '#our-story' }}">
               {{- section.settings.button_2_label -}}
             </a>
           {%- endif -%}
