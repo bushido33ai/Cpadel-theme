@@ -6,6 +6,20 @@ Custom Shopify theme for **CPadel** (padel rackets, https://www.cpadel.uk), buil
 - **Development store:** `cpadel-f8ryefap.myshopify.com` (Partner development store, owned by Hailo Digital)
 - **Live store:** CPadel's own store. We get access by requesting collaborator access from the Partner dashboard. Never use the client's login.
 
+## Dev store themes
+
+- **CPadel (dev)**, unpublished, theme ID `204073762897`. Push updates with `shopify theme push --theme 204073762897`.
+  Preview (log in to the store admin first): https://cpadel-f8ryefap.myshopify.com?preview_theme_id=204073762897
+
+## Brand foundation
+
+Taken from CPadel's current store (Prestige theme, password page at cpadel.uk):
+
+- **Colours:** night `#0D0D0D` background, ivory `#F5F5F3` text, gold `#C8A45D` accent (`color1`), panels `#1A1A1A` (`color2`), lines `#2E2E2C` (`color3`).
+- **Type:** Cormorant for headings (uppercase, wide tracking), Jost for body text and buttons.
+- **Shape:** square corners everywhere, gold primary buttons, uppercase wide-tracked button labels.
+- Theme-wide settings live in `config/settings_data.json`. Extra brand CSS lives in `snippets/cpadel-brand.liquid`, rendered from `layout/theme.liquid`.
+
 ## Workflow
 
 1. Build and preview against the development store.

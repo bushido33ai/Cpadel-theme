@@ -1,0 +1,39 @@
+{%- comment -%}
+  CPadel brand layer. Loaded after Horizon's theme variables so it can widen
+  heading tracking and add gold details without editing core Horizon files.
+{%- endcomment -%}
+{% style %}
+  :root {
+    --cpadel-gold: {{ settings.color_palette.color1 | default: '#C8A45D' }};
+    --cpadel-night: {{ settings.color_palette.background | default: '#0D0D0D' }};
+    --cpadel-ivory: {{ settings.color_palette.foreground | default: '#F5F5F3' }};
+
+    /* The CPadel wordmark is widely spaced; headings follow suit. */
+    --letter-spacing--heading-loose: 0.18em;
+    --letter-spacing--display-loose: 0.14em;
+  }
+
+  /* Buttons: wide-tracked capitals, like the current CPadel store. */
+  .button,
+  .button-secondary,
+  button.button,
+  .shopify-payment-button__button--unbranded {
+    letter-spacing: 0.22em;
+  }
+
+  /* Gold hairline focus and link hover. */
+  :focus-visible {
+    outline-color: var(--cpadel-gold);
+  }
+
+  .rte a:hover,
+  .menu-list__link:hover,
+  .footer a:hover {
+    color: var(--cpadel-gold);
+  }
+
+  ::selection {
+    background: var(--cpadel-gold);
+    color: var(--cpadel-night);
+  }
+{% endstyle %}
