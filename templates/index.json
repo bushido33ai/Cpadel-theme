@@ -15,7 +15,7 @@
         "show_emblem": false,
         "play_intro": true,
         "eyebrow": "Premium padel rackets",
-        "show_racket": true
+        "show_racket": false
       }
     },
     "cpadel_lineup": {
