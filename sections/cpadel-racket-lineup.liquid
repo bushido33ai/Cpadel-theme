@@ -1,0 +1,320 @@
+{%- comment -%}
+  CPadel racket line-up: the rackets on sale from a collection, followed by
+  "Coming soon" cards (one per block) for rackets that aren't out yet.
+{%- endcomment -%}
+
+{%- liquid
+  assign lineup_collection = section.settings.collection
+  if lineup_collection == blank
+    assign lineup_collection = collections.all
+  endif
+-%}
+
+<div class="cpadel-lineup">
+  <div class="cpadel-lineup__header">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="cpadel-lineup__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="cpadel-lineup__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.text != blank -%}
+      <div class="cpadel-lineup__text">{{ section.settings.text }}</div>
+    {%- endif -%}
+  </div>
+
+  <ul class="cpadel-lineup__grid" role="list">
+    {%- for product in lineup_collection.products limit: section.settings.max_products -%}
+      <li class="cpadel-lineup__item">
+        <a class="cpadel-card" href="{{ product.url }}">
+          <div class="cpadel-card__media">
+            {%- if product.featured_media -%}
+              {{-
+                product.featured_media
+                | image_url: width: 1200
+                | image_tag:
+                  widths: '400, 600, 800, 1000, 1200',
+                  sizes: '(min-width: 990px) 25vw, 50vw',
+                  loading: 'lazy',
+                  class: 'cpadel-card__image',
+                  alt: product.featured_media.alt
+              -}}
+            {%- else -%}
+              {{- 'product-1' | placeholder_svg_tag: 'cpadel-card__image' -}}
+            {%- endif -%}
+            {%- unless product.available -%}
+              <span class="cpadel-card__badge">Sold out</span>
+            {%- endunless -%}
+          </div>
+          <div class="cpadel-card__body">
+            <h3 class="cpadel-card__title">{{ product.title }}</h3>
+            <p class="cpadel-card__price">
+              {%- if product.price_varies -%}From {% endif -%}
+              {{- product.price | money -}}
+            </p>
+          </div>
+        </a>
+      </li>
+    {%- endfor -%}
+
+    {%- for block in section.blocks -%}
+      <li class="cpadel-lineup__item" {{ block.shopify_attributes }}>
+        <div class="cpadel-card cpadel-card--soon">
+          <div class="cpadel-card__media cpadel-card__media--soon">
+            {%- if block.settings.image != blank -%}
+              {{-
+                block.settings.image
+                | image_url: width: 1200
+                | image_tag:
+                  widths: '400, 600, 800, 1000, 1200',
+                  sizes: '(min-width: 990px) 25vw, 50vw',
+                  loading: 'lazy',
+                  class: 'cpadel-card__image cpadel-card__image--soon',
+                  alt: block.settings.image.alt
+              -}}
+            {%- else -%}
+              <img
+                class="cpadel-card__emblem"
+                src="{{ 'cpadel-emblem-burgundy.png' | asset_url }}"
+                alt=""
+                width="226"
+                height="192"
+                loading="lazy"
+              >
+            {%- endif -%}
+            <span class="cpadel-card__badge cpadel-card__badge--soon">{{ block.settings.label }}</span>
+          </div>
+          <div class="cpadel-card__body">
+            <h3 class="cpadel-card__title">{{ block.settings.title }}</h3>
+            {%- if block.settings.note != blank -%}
+              <p class="cpadel-card__price">{{ block.settings.note }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+      </li>
+    {%- endfor -%}
+  </ul>
+</div>
+
+{% stylesheet %}
+  .cpadel-lineup {
+    padding-block: clamp(3.5rem, 8vw, 6.5rem);
+    padding-inline: clamp(1.25rem, 6vw, 6rem);
+  }
+
+  .cpadel-lineup__header {
+    max-width: 40rem;
+    margin: 0 auto clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+
+  .cpadel-lineup__eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--cpadel-burgundy, #6b1e24);
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-lineup__heading {
+    margin: 0;
+  }
+
+  .cpadel-lineup__text {
+    margin-top: 1rem;
+  }
+
+  .cpadel-lineup__text p {
+    margin: 0;
+  }
+
+  .cpadel-lineup__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media screen and (min-width: 990px) {
+    .cpadel-lineup__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .cpadel-card {
+    display: block;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cpadel-card__media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: #eadfd0;
+  }
+
+  .cpadel-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  a.cpadel-card:hover .cpadel-card__image {
+    transform: scale(1.04);
+  }
+
+  .cpadel-card__media--soon {
+    background:
+      radial-gradient(circle at 50% 45%, rgb(255 250 243 / 0.7), rgb(255 250 243 / 0) 60%),
+      #eadfd0;
+  }
+
+  .cpadel-card__image--soon {
+    filter: grayscale(0.6) blur(2px);
+    opacity: 0.55;
+  }
+
+  .cpadel-card__emblem {
+    width: 34%;
+    height: auto;
+    opacity: 0.22;
+  }
+
+  .cpadel-card__badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.4rem 0.7rem;
+    background: var(--cpadel-ink, #2b1618);
+    color: #f4eee6;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-card__badge--soon {
+    background: var(--cpadel-burgundy, #6b1e24);
+  }
+
+  .cpadel-card__body {
+    padding-top: 1rem;
+  }
+
+  .cpadel-card__title {
+    margin: 0;
+    font-family: var(--font-subheading--family);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .cpadel-card__price {
+    margin: 0.35rem 0 0;
+    font-size: 0.9375rem;
+  }
+
+  .cpadel-card--soon .cpadel-card__title,
+  .cpadel-card--soon .cpadel-card__price {
+    opacity: 0.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cpadel-card__image {
+      transition: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel racket line-up",
+  "tag": "section",
+  "class": "cpadel-lineup-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above heading",
+      "default": "The collection"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Our rackets"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Rackets on sale",
+      "info": "Leave empty to show all products."
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "label": "Most rackets to show",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "coming_soon",
+      "name": "Coming soon racket",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name",
+          "default": "New racket"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Badge",
+          "default": "Coming soon"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Note under the name",
+          "info": "Optional, e.g. a launch month."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Teaser image",
+          "info": "Optional. Shown faded and blurred. Leave empty to show the crowned C."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel racket line-up",
+      "blocks": [
+        { "type": "coming_soon" },
+        { "type": "coming_soon" },
+        { "type": "coming_soon" }
+      ]
+    }
+  ]
+}
+{% endschema %}

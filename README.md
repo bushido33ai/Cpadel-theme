@@ -32,6 +32,10 @@ The emblem source is only 226 px wide, so ask CPadel for a vector (SVG/AI/EPS) o
 
 `sections/cpadel-signoff.liquid` is a brand band (emblem, large wordmark, strapline) placed above the footer.
 
+## Racket line-up
+
+`sections/cpadel-racket-lineup.liquid` lists the rackets on sale from a collection (default: all products), then one "Coming soon" card per block. Coming-soon cards show the crowned C, or a faded, blurred teaser image if one is picked. On the dev store the only product is **CPadel Control Series** (`/products/cpadel-control-series`, placeholder price £149.00, inventory not tracked).
+
 ## Homepage hero
 
 `sections/cpadel-hero.liquid` is a full-screen photo hero (eyebrow, heading, text, two buttons). With no image chosen it uses the bundled sunlit court photo, `assets/cpadel-court-sun-2048.jpg` (desktop) and `assets/cpadel-court-sun-1200.jpg` (mobile crop). The photo is AI-generated for CPadel (no people, logos or text) and is also in the dev store's Files as `cpadel-court-sun.png`. Swap in a real photoshoot image from the theme editor when one exists.
