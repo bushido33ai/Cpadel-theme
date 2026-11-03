@@ -23,9 +23,10 @@
     {%- endif -%}
   </div>
 
+  <cpadel-reveal>
   <ul class="cpadel-lineup__grid" role="list">
     {%- for product in lineup_collection.products limit: section.settings.max_products -%}
-      <li class="cpadel-lineup__item">
+      <li class="cpadel-lineup__item" data-reveal-item>
         <a class="cpadel-card" href="{{ product.url }}">
           <div class="cpadel-card__media">
             {%- if product.featured_media -%}
@@ -58,7 +59,7 @@
     {%- endfor -%}
 
     {%- for block in section.blocks -%}
-      <li class="cpadel-lineup__item" {{ block.shopify_attributes }}>
+      <li class="cpadel-lineup__item" data-reveal-item {{ block.shopify_attributes }}>
         <div class="cpadel-card cpadel-card--soon">
           <div class="cpadel-card__media cpadel-card__media--soon">
             {%- if block.settings.image != blank -%}
@@ -94,6 +95,7 @@
       </li>
     {%- endfor -%}
   </ul>
+  </cpadel-reveal>
 </div>
 
 {% stylesheet %}
@@ -127,6 +129,10 @@
 
   .cpadel-lineup__text p {
     margin: 0;
+  }
+
+  cpadel-reveal {
+    display: block;
   }
 
   .cpadel-lineup__grid {

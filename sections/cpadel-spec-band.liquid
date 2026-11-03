@@ -1,0 +1,180 @@
+{%- comment -%}
+  CPadel spec band: a slow scrolling line of words separated by spinning
+  padel balls. CSS only. Stops and wraps for reduced motion.
+{%- endcomment -%}
+
+{%- liquid
+  assign items = section.settings.items | split: ','
+-%}
+
+{%- capture ball -%}
+  <svg class="cpadel-band__ball" viewBox="-6 -6 12 12" aria-hidden="true" focusable="false">
+    <circle cx="0" cy="0" r="5" />
+    <path d="M-4.3 -2.4 C-1.6 -0.5 -1.6 1.1 -4.3 2.8 M4.3 -2.8 C1.6 -1.1 1.6 0.5 4.3 2.4" fill="none" />
+  </svg>
+{%- endcapture -%}
+
+{%- capture run -%}
+  {%- comment -%} Twice per run, so it is wider than wide screens {%- endcomment -%}
+  {%- for i in (1..2) -%}
+  {%- for item in items -%}
+    {%- assign label = item | strip -%}
+    {%- if label != blank -%}
+      <span class="cpadel-band__item">{{ label }}</span>{{ ball }}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+<div
+  class="cpadel-band cpadel-band--{{ section.settings.style }}"
+  style="--cpadel-band-duration: {{ section.settings.duration }}s;"
+>
+  <p class="visually-hidden">{{ items | join: ', ' }}</p>
+  <div class="cpadel-band__track" aria-hidden="true">
+    <div class="cpadel-band__run">{{ run }}</div>
+    <div class="cpadel-band__run">{{ run }}</div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .cpadel-band {
+    overflow: hidden;
+    padding-block: clamp(1.1rem, 2.5vw, 1.6rem);
+  }
+
+  .cpadel-band--ink {
+    background: #2b1618;
+    color: #f4eee6;
+  }
+
+  .cpadel-band--burgundy {
+    background: #6b1e24;
+    color: #f4eee6;
+  }
+
+  .cpadel-band--sand {
+    background: #eadfd0;
+    color: #2b1618;
+  }
+
+  .cpadel-band__track {
+    display: flex;
+    width: max-content;
+    animation: cpadel-band-scroll var(--cpadel-band-duration, 40s) linear infinite;
+  }
+
+  .cpadel-band:hover .cpadel-band__track {
+    animation-play-state: paused;
+  }
+
+  .cpadel-band__run {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .cpadel-band__item {
+    padding-inline: clamp(1.25rem, 3vw, 2.5rem);
+    font-family: var(--font-heading--family);
+    font-size: clamp(1.25rem, 2.6vw, 2rem);
+    letter-spacing: 0.18em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cpadel-band__ball {
+    flex-shrink: 0;
+    width: clamp(1rem, 1.8vw, 1.4rem);
+    height: auto;
+    animation: cpadel-band-spin 2.4s linear infinite;
+  }
+
+  .cpadel-band__ball circle {
+    fill: #dfe85a;
+  }
+
+  .cpadel-band__ball path {
+    stroke: #fffaf3;
+    stroke-width: 0.9;
+  }
+
+  @keyframes cpadel-band-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes cpadel-band-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cpadel-band__track {
+      flex-wrap: wrap;
+      justify-content: center;
+      width: auto;
+      animation: none;
+    }
+
+    .cpadel-band__run + .cpadel-band__run {
+      display: none;
+    }
+
+    .cpadel-band__run {
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 0.75rem;
+    }
+
+    .cpadel-band__ball {
+      animation: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel spec band",
+  "tag": "section",
+  "class": "cpadel-band-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "items",
+      "label": "Words",
+      "info": "Separate with commas.",
+      "default": "3K Carbon, Pro Core, Control Series, Made for the court"
+    },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Colours",
+      "options": [
+        { "value": "ink", "label": "Cream on dark" },
+        { "value": "burgundy", "label": "Cream on burgundy" },
+        { "value": "sand", "label": "Dark on sand" }
+      ],
+      "default": "ink"
+    },
+    {
+      "type": "range",
+      "id": "duration",
+      "label": "Time for one full scroll",
+      "min": 15,
+      "max": 90,
+      "step": 5,
+      "unit": "s",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel spec band"
+    }
+  ]
+}
+{% endschema %}

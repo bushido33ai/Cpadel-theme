@@ -1,0 +1,8 @@
+{%- comment -%}
+  CPadel motion. GSAP (standard no-charge licence, https://gsap.com/standard-license)
+  is bundled in assets so the store doesn't depend on a CDN. All scripts are
+  deferred, so they run in order after the page is parsed.
+{%- endcomment -%}
+<script src="{{ 'gsap.min.js' | asset_url }}" defer></script>
+<script src="{{ 'ScrollTrigger.min.js' | asset_url }}" defer></script>
+<script src="{{ 'cpadel-motion.js' | asset_url }}" defer></script>

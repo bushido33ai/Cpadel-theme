@@ -48,10 +48,55 @@
         "soon_2",
         "soon_3"
       ]
+    },
+    "cpadel_band": {
+      "type": "cpadel-spec-band",
+      "settings": {
+        "items": "3K Carbon, Pro Core, Control Series, Made for the court",
+        "style": "ink",
+        "duration": 40
+      }
+    },
+    "cpadel_rally": {
+      "type": "cpadel-court-rally",
+      "settings": {
+        "eyebrow": "On court",
+        "heading": "Built for every rally"
+      },
+      "blocks": {
+        "spec_1": {
+          "type": "spec",
+          "settings": {
+            "title": "3K Carbon",
+            "text": "A woven carbon face for a crisp, responsive feel."
+          }
+        },
+        "spec_2": {
+          "type": "spec",
+          "settings": {
+            "title": "Pro Core",
+            "text": "A core tuned for comfort through long rallies."
+          }
+        },
+        "spec_3": {
+          "type": "spec",
+          "settings": {
+            "title": "Control Series",
+            "text": "Shaped for placement and touch at the net."
+          }
+        }
+      },
+      "block_order": [
+        "spec_1",
+        "spec_2",
+        "spec_3"
+      ]
     }
   },
   "order": [
     "cpadel_hero",
-    "cpadel_lineup"
+    "cpadel_band",
+    "cpadel_lineup",
+    "cpadel_rally"
   ]
 }

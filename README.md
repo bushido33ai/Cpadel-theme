@@ -40,6 +40,16 @@ The emblem source is only 226 px wide, so ask CPadel for a vector (SVG/AI/EPS) o
 
 `sections/cpadel-hero.liquid` is a full-screen photo hero (eyebrow, heading, text, two buttons). With no image chosen it uses the bundled sunlit court photo, `assets/cpadel-court-sun-2048.jpg` (desktop) and `assets/cpadel-court-sun-1200.jpg` (mobile crop). The photo is AI-generated for CPadel (no people, logos or text) and is also in the dev store's Files as `cpadel-court-sun.png`. Swap in a real photoshoot image from the theme editor when one exists.
 
+## Motion
+
+GSAP 3.15 (`assets/gsap.min.js`, `assets/ScrollTrigger.min.js`, standard no-charge licence) is bundled and loaded deferred from `snippets/cpadel-scripts.liquid`. CPadel's own motion is in `assets/cpadel-motion.js`:
+
+- `<cpadel-court-rally>` (used by `sections/cpadel-court-rally.liquid`): a to-scale top-down padel court that draws itself on scroll, then a ball (with shadow and trail) plays a rally with bounces and glass rebounds. Rally shots are the `RALLY` array, in court units (10 per metre, court 200 x 100).
+- `<cpadel-reveal>`: children with `data-reveal-item` rise in as they scroll into view (used on the racket line-up).
+- `sections/cpadel-spec-band.liquid`: CSS-only scrolling band of words with spinning padel balls.
+
+Everything is visible and static without JavaScript, and `prefers-reduced-motion` turns the motion off.
+
 ## Workflow
 
 1. Build and preview against the development store.

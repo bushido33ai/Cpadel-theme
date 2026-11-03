@@ -1,0 +1,263 @@
+{%- comment -%}
+  CPadel court rally: a top-down padel court (to scale, 20 m x 10 m) that
+  draws itself on scroll, then a ball plays a rally across it.
+  Specs sit alongside as blocks. Motion lives in assets/cpadel-motion.js.
+
+  Court units: 10 per metre. Service lines are 6.95 m from the net
+  (x = 30.5 and 169.5). Glass: back walls and the first 2 m of each side.
+{%- endcomment -%}
+
+<cpadel-court-rally class="cpadel-rally">
+  <div class="cpadel-rally__header">
+    {%- if section.settings.eyebrow != blank -%}
+      <p class="cpadel-rally__eyebrow">{{ section.settings.eyebrow }}</p>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="cpadel-rally__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+  </div>
+
+  <div class="cpadel-rally__layout">
+    <div class="cpadel-rally__court" data-court>
+      <svg viewBox="-8 -8 216 116" role="img" aria-label="A ball rallying across a padel court" focusable="false">
+        <g class="cpadel-rally__surface">
+          <rect x="0" y="0" width="200" height="100" />
+        </g>
+
+        <g class="cpadel-rally__lines" fill="none">
+          {%- comment -%} Walls: glass is solid, mesh is lighter {%- endcomment -%}
+          <path class="cpadel-rally__glass" data-court-line pathLength="1" d="M20 0 H0 V100 H20" />
+          <path class="cpadel-rally__glass" data-court-line pathLength="1" d="M180 0 H200 V100 H180" />
+          <path class="cpadel-rally__mesh" data-court-line pathLength="1" d="M20 0 H180" />
+          <path class="cpadel-rally__mesh" data-court-line pathLength="1" d="M20 100 H180" />
+
+          {%- comment -%} Court lines {%- endcomment -%}
+          <path class="cpadel-rally__line" data-court-line pathLength="1" d="M30.5 0 V100" />
+          <path class="cpadel-rally__line" data-court-line pathLength="1" d="M169.5 0 V100" />
+          <path class="cpadel-rally__line" data-court-line pathLength="1" d="M30.5 50 H169.5" />
+
+          {%- comment -%} Net and posts {%- endcomment -%}
+          <path class="cpadel-rally__net" data-court-line pathLength="1" d="M100 -3 V103" />
+        </g>
+
+        <polyline class="cpadel-rally__trail" data-ball-trail points="" fill="none" />
+
+        <g class="cpadel-rally__shadow" data-ball-shadow transform="translate(150 58)">
+          <ellipse cx="0" cy="0" rx="3" ry="1.6" />
+        </g>
+
+        <g class="cpadel-rally__ball" data-ball transform="translate(150 58)">
+          <g data-ball-body>
+            <circle cx="0" cy="0" r="2.6" />
+            <path class="cpadel-rally__seam" d="M-2.2 -1.2 C-0.8 -0.2 -0.8 0.6 -2.2 1.4 M2.2 -1.4 C0.8 -0.6 0.8 0.2 2.2 1.2" fill="none" />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="cpadel-rally__specs" role="list">
+        {%- for block in section.blocks -%}
+          <li class="cpadel-rally__spec" data-court-spec {{ block.shopify_attributes }}>
+            <span class="cpadel-rally__spec-index">{{ forloop.index | prepend: '0' }}</span>
+            <div>
+              <h3 class="cpadel-rally__spec-title">{{ block.settings.title }}</h3>
+              {%- if block.settings.text != blank -%}
+                <p class="cpadel-rally__spec-text">{{ block.settings.text }}</p>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</cpadel-court-rally>
+
+{% stylesheet %}
+  .cpadel-rally {
+    display: block;
+    padding-block: clamp(3.5rem, 8vw, 6.5rem);
+    padding-inline: clamp(1.25rem, 6vw, 6rem);
+  }
+
+  .cpadel-rally__header {
+    max-width: 40rem;
+    margin: 0 auto clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+
+  .cpadel-rally__eyebrow {
+    margin: 0 0 0.75rem;
+    color: var(--cpadel-burgundy, #6b1e24);
+    font-family: var(--font-subheading--family);
+    font-size: 0.8125rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-rally__heading {
+    margin: 0;
+  }
+
+  .cpadel-rally__layout {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+    max-width: 80rem;
+    margin-inline: auto;
+  }
+
+  @media screen and (min-width: 990px) {
+    .cpadel-rally__layout {
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    }
+  }
+
+  .cpadel-rally__court svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .cpadel-rally__surface rect {
+    fill: #eadfd0;
+  }
+
+  .cpadel-rally__lines path {
+    stroke-linecap: square;
+  }
+
+  .cpadel-rally__glass {
+    stroke: var(--cpadel-burgundy, #6b1e24);
+    stroke-width: 0.9;
+  }
+
+  .cpadel-rally__mesh {
+    stroke: var(--cpadel-burgundy, #6b1e24);
+    stroke-width: 0.6;
+    opacity: 0.6;
+  }
+
+  .cpadel-rally__line {
+    stroke: #fffaf3;
+    stroke-width: 0.7;
+  }
+
+  .cpadel-rally__net {
+    stroke: var(--cpadel-ink, #2b1618);
+    stroke-width: 0.6;
+  }
+
+  .cpadel-rally__trail {
+    stroke: var(--cpadel-burgundy, #6b1e24);
+    stroke-width: 0.5;
+    stroke-dasharray: 1.2 1.8;
+    opacity: 0.5;
+  }
+
+  .cpadel-rally__shadow ellipse {
+    fill: rgb(43 22 24 / 0.22);
+  }
+
+  .cpadel-rally__ball circle {
+    fill: #dfe85a;
+    stroke: var(--cpadel-ink, #2b1618);
+    stroke-width: 0.35;
+  }
+
+  .cpadel-rally__seam {
+    stroke: #fffaf3;
+    stroke-width: 0.45;
+  }
+
+  .cpadel-rally__specs {
+    display: grid;
+    gap: clamp(1.25rem, 3vw, 2rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cpadel-rally__spec {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #d8c7b3;
+  }
+
+  .cpadel-rally__spec-index {
+    color: var(--cpadel-burgundy, #6b1e24);
+    font-family: var(--font-heading--family);
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .cpadel-rally__spec-title {
+    margin: 0;
+    font-family: var(--font-subheading--family);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .cpadel-rally__spec-text {
+    margin: 0.4rem 0 0;
+    opacity: 0.8;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CPadel court rally",
+  "tag": "section",
+  "class": "cpadel-rally-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Small line above heading",
+      "default": "On court"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Built for every rally"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "spec",
+      "name": "Spec",
+      "limit": 4,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "3K Carbon"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "A woven carbon face for a crisp, responsive feel."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CPadel court rally",
+      "blocks": [
+        { "type": "spec", "settings": { "title": "3K Carbon", "text": "A woven carbon face for a crisp, responsive feel." } },
+        { "type": "spec", "settings": { "title": "Pro Core", "text": "A core tuned for comfort through long rallies." } },
+        { "type": "spec", "settings": { "title": "Control Series", "text": "Shaped for placement and touch at the net." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
