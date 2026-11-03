@@ -41,6 +41,21 @@
     border-color: var(--cpadel-oxblood);
   }
 
+  /*
+    Motion (assets/cpadel-motion.js). Horizon scrolls .page-wrapper on desktop;
+    CSS smooth scrolling there fights ScrollTrigger's measurements, so it is
+    switched off while the motion is running, and the opening sequence locks
+    whichever element is scrolling.
+  */
+  html.cpadel-motion,
+  html.cpadel-motion .page-wrapper {
+    scroll-behavior: auto;
+  }
+
+  html.cpadel-intro-pending .page-wrapper {
+    overflow: hidden;
+  }
+
   ::selection {
     background: var(--cpadel-burgundy);
     color: var(--cpadel-cream);

@@ -28,7 +28,7 @@
     {%- for product in lineup_collection.products limit: section.settings.max_products -%}
       <li class="cpadel-lineup__item" data-reveal-item>
         <a class="cpadel-card" href="{{ product.url }}">
-          <div class="cpadel-card__media">
+          <div class="cpadel-card__media" data-tilt>
             {%- if product.featured_media -%}
               {{-
                 product.featured_media
@@ -46,6 +46,7 @@
             {%- unless product.available -%}
               <span class="cpadel-card__badge">Sold out</span>
             {%- endunless -%}
+            <span class="cpadel-card__glare" data-tilt-glare aria-hidden="true"></span>
           </div>
           <div class="cpadel-card__body">
             <h3 class="cpadel-card__title">{{ product.title }}</h3>
@@ -61,7 +62,7 @@
     {%- for block in section.blocks -%}
       <li class="cpadel-lineup__item" data-reveal-item {{ block.shopify_attributes }}>
         <div class="cpadel-card cpadel-card--soon">
-          <div class="cpadel-card__media cpadel-card__media--soon">
+          <div class="cpadel-card__media cpadel-card__media--soon" data-tilt>
             {%- if block.settings.image != blank -%}
               {{-
                 block.settings.image
@@ -84,6 +85,7 @@
               >
             {%- endif -%}
             <span class="cpadel-card__badge cpadel-card__badge--soon">{{ block.settings.label }}</span>
+            <span class="cpadel-card__glare" data-tilt-glare aria-hidden="true"></span>
           </div>
           <div class="cpadel-card__body">
             <h3 class="cpadel-card__title">{{ block.settings.title }}</h3>
@@ -175,6 +177,34 @@
 
   a.cpadel-card:hover .cpadel-card__image {
     transform: scale(1.04);
+  }
+
+  .cpadel-lineup__grid {
+    perspective: 1200px;
+  }
+
+  /* GSAP drives the image transform (scroll parallax), so no CSS transition. */
+  .cpadel-motion .cpadel-card__image {
+    transition: none;
+  }
+
+  .cpadel-card__media[data-tilt] {
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .cpadel-card__glare {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 30%), rgb(255 250 243 / 0.45), rgb(255 250 243 / 0) 55%);
+    opacity: 0;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+
+  .cpadel-card:hover .cpadel-card__glare {
+    opacity: 1;
   }
 
   .cpadel-card__media--soon {

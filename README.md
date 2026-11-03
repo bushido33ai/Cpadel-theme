@@ -45,8 +45,8 @@ The emblem source is only 226 px wide, so ask CPadel for a vector (SVG/AI/EPS) o
 
 GSAP 3.15 (`assets/gsap.min.js`, `assets/ScrollTrigger.min.js`, standard no-charge licence) is bundled and loaded deferred from `snippets/cpadel-scripts.liquid`. CPadel's own motion is in `assets/cpadel-motion.js`:
 
-- `<cpadel-court-rally>` (used by `sections/cpadel-court-rally.liquid`): a to-scale top-down padel court that draws itself on scroll, then a ball (with shadow and trail) plays a rally with bounces and glass rebounds. Rally shots are the `RALLY` array, in court units (10 per metre, court 200 x 100).
-- `<cpadel-reveal>`: children with `data-reveal-item` rise in as they scroll into view (used on the racket line-up).
+- `<cpadel-court-rally>` (used by `sections/cpadel-court-rally.liquid`): a to-scale padel court built in CSS 3D (floor, glass back walls, mesh side wall with glass ends, net). As the section scrolls past, the court tilts from a flat plan into a broadcast angle, the walls and net fold up out of the floor and the camera orbits; a ball (with shadow and trail) plays a rally in 3D with bounces and glass rebounds. Rally shots are the `RALLY` array, in court units (10 per metre, court 200 x 100); the ball's position is set as CSS variables `--bx`, `--by`, `--bz`, with `--u` = one unit in pixels.
+- `<cpadel-reveal>` (racket line-up): cards wipe up from behind a curtain as they scroll in, images drift with scroll, and `[data-tilt]` cards tilt towards a mouse pointer with a soft glare.
 - `sections/cpadel-spec-band.liquid`: scrolling band of words with spinning padel balls. CSS loop by default; `<cpadel-band-motion>` takes over to make it speed up, lean and reverse with scroll velocity.
 - `<cpadel-hero-motion>` (in `sections/cpadel-hero.liquid`): opening sequence (crowned C sweeps in, crown drops on, wordmark wipes in, cream then burgundy curtains lift), then the headline rises letter by letter (SplitText) and the court settles. Plays once per browser session, never with reduced motion or in the theme editor; click or any key skips it; a 4 s failsafe removes the overlay if the script never starts. Scroll parallax on the photo and copy.
 - `<cpadel-showcase>` (`sections/cpadel-racket-showcase.liquid`): pinned for ~3 screens; background cream to burgundy to ink, a giant outlined word slides past, the racket cut-out rises and turns in 3D with a light sheen, leader lines draw to the spec callouts (positions set per block in % of the racket), then the racket steps aside for the price card. Phones show one spec at a time under the racket.
@@ -55,6 +55,8 @@ GSAP 3.15 (`assets/gsap.min.js`, `assets/ScrollTrigger.min.js`, standard no-char
 - GSAP's SplitText (`assets/SplitText.min.js`) is bundled alongside GSAP and ScrollTrigger.
 
 Everything is visible and static without JavaScript, and `prefers-reduced-motion` turns the motion off.
+
+**Important: Horizon's scroll container.** On screens 990 px and wider Horizon locks the document and scrolls `.page-wrapper` instead (see `assets/scroll-container.js`); on phones the document scrolls. ScrollTrigger is pointed at the same element (`ScrollTrigger.defaults({ scroller })` in `cpadel-motion.js`), and every motion element is a `MotionElement` with `start()`/`stop()` so all of them are rebuilt, in page order, when the breakpoint is crossed. Any new scroll animation must use the default scroller, not `window`. When testing locally, render sections inside Horizon's real structure (`.page-wrapper > main.content-for-layout > .shopify-section`) with `assets/base.css`, or the desktop scroller isn't reproduced.
 
 ## Workflow
 

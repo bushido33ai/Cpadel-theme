@@ -23,6 +23,47 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /*
+   * Horizon scrolls `.page-wrapper` on desktop (>= 990px) and the document on
+   * phones (see assets/scroll-container.js). ScrollTrigger must listen to the
+   * same scroller, so every motion element can be stopped and restarted, and
+   * all of them are rebuilt, in page order, when that breakpoint is crossed.
+   */
+  const scrollContainerQuery = window.matchMedia('(min-width: 990px)');
+  const getScroller = () => (scrollContainerQuery.matches && document.querySelector('.page-wrapper')) || window;
+  ScrollTrigger.defaults({ scroller: getScroller() });
+  if (!reduceMotion()) document.documentElement.classList.add('cpadel-motion');
+
+  const live = new Set();
+  const inPageOrder = () =>
+    [...live].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+
+  class MotionElement extends HTMLElement {
+    connectedCallback() {
+      live.add(this);
+      this.start();
+    }
+
+    disconnectedCallback() {
+      live.delete(this);
+      this.stop();
+    }
+
+    start() {}
+
+    stop() {}
+  }
+
+  scrollContainerQuery.addEventListener('change', () => {
+    const ordered = inPageOrder();
+    [...ordered].reverse().forEach((el) => el.stop());
+    ScrollTrigger.defaults({ scroller: getScroller() });
+    ordered.forEach((el) => el.start());
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+  });
 
   /*
    * Rally, in court units (the SVG court is 200 x 100, i.e. 10 units per metre).
@@ -42,76 +83,94 @@
     { to: { x: 172, y: 68 }, h: 4, d: 0.35 },                // second bounce: point
   ];
 
-  class CpadelCourtRally extends HTMLElement {
-    connectedCallback() {
+  class CpadelCourtRally extends MotionElement {
+    start() {
       this.ctx = gsap.context(() => this.build(), this);
     }
 
-    disconnectedCallback() {
+    stop() {
+      if (this.ro) this.ro.disconnect();
       if (this.ctx) this.ctx.revert();
     }
 
     build() {
-      const lines = gsap.utils.toArray(this.querySelectorAll('[data-court-line]'));
-      const specs = gsap.utils.toArray(this.querySelectorAll('[data-court-spec]'));
-      const ball = this.querySelector('[data-ball]');
-      const ballBody = this.querySelector('[data-ball-body]');
-      const shadow = this.querySelector('[data-ball-shadow]');
-      const trail = this.querySelector('[data-ball-trail]');
-      const court = this.querySelector('[data-court]');
-      if (!ball || !shadow || !court) return;
+      const q = (sel) => this.querySelector(sel);
+      const qa = (sel) => gsap.utils.toArray(this.querySelectorAll(sel));
+      const plane = q('[data-plane]');
+      const court = q('[data-court]');
+      const ball = q('[data-ball]');
+      const ballBody = q('[data-ball-body]');
+      const shadow = q('[data-ball-shadow]');
+      const trail = q('[data-ball-trail]');
+      const net = q('[data-net]');
+      const lines = qa('[data-court-line]');
+      const specs = qa('[data-court-spec]');
+      const [farWall, leftWall, rightWall] = qa('[data-wall]');
+      if (!plane || !ball || !shadow) return;
 
-      const place = (x, y, h = 0) => {
-        gsap.set(shadow, { x, y });
-        gsap.set(ball, { x, y: y - h });
+      // One court unit (10 cm) in pixels, so the ball's height scales with the court.
+      const setUnit = () => this.style.setProperty('--u', `${plane.offsetWidth / 200}px`);
+      setUnit();
+      this.ro = new ResizeObserver(setUnit);
+      this.ro.observe(plane);
+
+      const place = (x, y, h) => {
+        this.style.setProperty('--bx', x.toFixed(2));
+        this.style.setProperty('--by', y.toFixed(2));
+        this.style.setProperty('--bz', Math.max(0, h).toFixed(2));
       };
 
       if (reduceMotion()) {
-        place(150, 58, 0);
-        gsap.set([ball, shadow], { autoAlpha: 1 });
+        place(150, 62, 0);
         return;
       }
 
-      // Lines draw themselves as the court scrolls into view.
+      // Camera: as the section passes, the court tilts from a flat plan into a
+      // broadcast angle and keeps orbiting; walls and net fold up out of the floor.
       gsap.set(lines, { strokeDasharray: 1, strokeDashoffset: 1 });
-      gsap.set(specs, { autoAlpha: 0, y: 24 });
+      gsap.set(specs, { autoAlpha: 0, y: 30 });
       gsap.set([ball, shadow], { autoAlpha: 0 });
 
-      gsap
-        .timeline({
-          scrollTrigger: { trigger: court, start: 'top 85%', end: 'center 55%', scrub: 0.6 },
-        })
-        .to(lines, { strokeDashoffset: 0, duration: 1, ease: 'power2.out', stagger: 0.08 });
+      const camera = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: { trigger: this, start: 'top bottom', end: 'bottom top', scrub: 1.2 },
+      });
+      camera
+        .fromTo(this, { '--tilt': '4deg', '--orbit': '-58deg' }, { '--tilt': '60deg', '--orbit': '-22deg', duration: 0.5, ease: 'power2.inOut' }, 0)
+        .to(this, { '--orbit': '16deg', '--tilt': '56deg', duration: 0.5 }, 0.5)
+        .to(lines, { strokeDashoffset: 0, duration: 0.28, stagger: 0.04, ease: 'power1.out' }, 0.06)
+        .fromTo(farWall, { rotationX: 0 }, { rotationX: 90, duration: 0.2, ease: 'power2.out' }, 0.3)
+        .fromTo(leftWall, { rotationY: 0 }, { rotationY: -90, duration: 0.2, ease: 'power2.out' }, 0.34)
+        .fromTo(rightWall, { rotationY: 0 }, { rotationY: 90, duration: 0.2, ease: 'power2.out' }, 0.38)
+        .fromTo(net, { rotationY: 0 }, { rotationY: -90, duration: 0.16, ease: 'back.out(2)' }, 0.42);
 
       ScrollTrigger.create({
         trigger: this,
-        start: 'top 70%',
+        start: 'top 55%',
         once: true,
-        onEnter: () =>
-          gsap.to(specs, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15 }),
+        onEnter: () => gsap.to(specs, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.15, delay: 0.4 }),
       });
 
-      // The rally: the shadow runs along the ground, the ball arcs above it,
+      // The rally: the shadow runs along the turf, the ball flies above it in 3D,
       // and a faint trail follows the shadow.
-      const rally = gsap.timeline({ repeat: -1, repeatDelay: 1.2, paused: true, defaults: { ease: 'none' } });
-      const pos = { x: RALLY_START.x, y: RALLY_START.y, h: 4 };
-      const contacts = []; // { t, x, y } for each completed shot
+      const rally = gsap.timeline({ repeat: -1, repeatDelay: 1, paused: true, defaults: { ease: 'none' } });
+      const pos = { x: RALLY_START.x, y: RALLY_START.y, h: 9 };
+      const contacts = [];
 
-      rally.set(pos, { x: RALLY_START.x, y: RALLY_START.y, h: 4 });
+      rally.set(pos, { x: RALLY_START.x, y: RALLY_START.y, h: 9 });
       rally.fromTo([ball, shadow, trail].filter(Boolean), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 });
 
       RALLY.forEach((shot) => {
         const t = rally.duration();
+        const peak = shot.h * 1.6; // metres-ish to court units, exaggerated a touch for drama
         rally.to(pos, { x: shot.to.x, y: shot.to.y, duration: shot.d }, t);
-        rally.to(pos, { h: shot.h, duration: shot.d / 2, ease: 'sine.out' }, t);
-        rally.to(pos, { h: shot.glass ? shot.h * 0.4 : 0, duration: shot.d / 2, ease: 'sine.in' }, t + shot.d / 2);
+        rally.to(pos, { h: peak, duration: shot.d / 2, ease: 'sine.out' }, t);
+        rally.to(pos, { h: shot.glass ? peak * 0.45 : 0, duration: shot.d / 2, ease: 'sine.in' }, t + shot.d / 2);
         contacts.push({ t: t + shot.d, x: shot.to.x, y: shot.to.y });
-
-        // A little squash on every contact.
         rally.fromTo(
           ballBody,
-          { scaleX: 1.35, scaleY: 0.7, svgOrigin: '0 0' },
-          { scaleX: 1, scaleY: 1, duration: 0.25, ease: 'back.out(3)', immediateRender: false },
+          { scaleX: 1.3, scaleY: 0.75 },
+          { scaleX: 1, scaleY: 1, duration: 0.22, ease: 'back.out(3)', immediateRender: false },
           t + shot.d
         );
       });
@@ -132,7 +191,7 @@
 
       ScrollTrigger.create({
         trigger: court,
-        start: 'top 60%',
+        start: 'top 65%',
         end: 'bottom top',
         onEnter: () => rally.play(),
         onEnterBack: () => rally.play(),
@@ -142,35 +201,85 @@
     }
   }
 
-  class CpadelReveal extends HTMLElement {
-    connectedCallback() {
+  class CpadelReveal extends MotionElement {
+    start() {
       if (reduceMotion()) return;
+      this.cleanups = [];
       this.ctx = gsap.context(() => {
         const items = gsap.utils.toArray(this.querySelectorAll('[data-reveal-item]'));
-        if (!items.length) return;
-        gsap.set(items, { autoAlpha: 0, y: 40 });
-        ScrollTrigger.batch(items, {
-          start: 'top 90%',
-          once: true,
-          onEnter: (batch) =>
-            gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.12 }),
-        });
+        if (items.length) {
+          // Each card wipes up from behind a curtain, lifting and turning slightly.
+          gsap.set(items, { clipPath: 'inset(100% 0% 0% 0%)', y: 80, rotation: 2, transformOrigin: '0% 100%' });
+          ScrollTrigger.batch(items, {
+            start: 'top 88%',
+            once: true,
+            onEnter: (batch) =>
+              gsap.to(batch, {
+                clipPath: 'inset(0% 0% 0% 0%)',
+                y: 0,
+                rotation: 0,
+                duration: 1.3,
+                ease: 'expo.out',
+                stagger: 0.14,
+              }),
+          });
+          items.forEach((item) => {
+            const image = item.querySelector('.cpadel-card__image, .cpadel-card__emblem');
+            if (image) {
+              gsap.fromTo(
+                image,
+                { yPercent: -6, scale: 1.12 },
+                { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: item, start: 'top bottom', end: 'bottom top', scrub: true } }
+              );
+            }
+          });
+        }
+
+        // Cards tilt towards the pointer, with a soft glare.
+        if (finePointer()) {
+          this.querySelectorAll('[data-tilt]').forEach((card) => {
+            const glare = card.querySelector('[data-tilt-glare]');
+            const rx = gsap.quickTo(card, 'rotationX', { duration: 0.6, ease: 'power3' });
+            const ry = gsap.quickTo(card, 'rotationY', { duration: 0.6, ease: 'power3' });
+            const move = (event) => {
+              const r = card.getBoundingClientRect();
+              const px = (event.clientX - r.left) / r.width;
+              const py = (event.clientY - r.top) / r.height;
+              ry((px - 0.5) * 16);
+              rx((0.5 - py) * 16);
+              if (glare) {
+                glare.style.setProperty('--glare-x', `${px * 100}%`);
+                glare.style.setProperty('--glare-y', `${py * 100}%`);
+              }
+            };
+            const leave = () => {
+              rx(0);
+              ry(0);
+            };
+            card.addEventListener('pointermove', move);
+            card.addEventListener('pointerleave', leave);
+            this.cleanups.push(() => {
+              card.removeEventListener('pointermove', move);
+              card.removeEventListener('pointerleave', leave);
+            });
+          });
+        }
       }, this);
     }
 
-    disconnectedCallback() {
+    stop() {
+      if (this.cleanups) this.cleanups.forEach((fn) => fn());
       if (this.ctx) this.ctx.revert();
     }
   }
 
   const html = document.documentElement;
-  const finePointer = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   /* ------------------------------------------------------------------ */
   /* Hero: opening sequence, letter-by-letter headline, scroll parallax  */
   /* ------------------------------------------------------------------ */
-  class CpadelHeroMotion extends HTMLElement {
-    connectedCallback() {
+  class CpadelHeroMotion extends MotionElement {
+    start() {
       if (reduceMotion()) {
         this.finishIntro();
         return;
@@ -179,7 +288,7 @@
       this.ctx = gsap.context(() => this.build(), this);
     }
 
-    disconnectedCallback() {
+    stop() {
       if (this.ctx) this.ctx.revert();
       if (this.split) this.split.revert();
     }
@@ -275,15 +384,15 @@
   /* ------------------------------------------------------------------ */
   /* Showcase: pinned 3D racket reveal                                    */
   /* ------------------------------------------------------------------ */
-  class CpadelShowcase extends HTMLElement {
-    connectedCallback() {
+  class CpadelShowcase extends MotionElement {
+    start() {
       if (reduceMotion()) return;
       this.classList.add('is-animated');
       this.mm = gsap.matchMedia();
       this.mm.add({ desktop: '(min-width: 750px)', mobile: '(max-width: 749px)' }, (ctx) => this.build(ctx.conditions.desktop));
     }
 
-    disconnectedCallback() {
+    stop() {
       if (this.mm) this.mm.revert();
       this.classList.remove('is-animated');
     }
@@ -378,8 +487,8 @@
   /* ------------------------------------------------------------------ */
   /* Spec band: velocity-reactive marquee                                 */
   /* ------------------------------------------------------------------ */
-  class CpadelBandMotion extends HTMLElement {
-    connectedCallback() {
+  class CpadelBandMotion extends MotionElement {
+    start() {
       if (reduceMotion()) return;
       const band = this.querySelector('.cpadel-band');
       const track = this.querySelector('.cpadel-band__track');
@@ -413,7 +522,7 @@
       }, this);
     }
 
-    disconnectedCallback() {
+    stop() {
       if (this.tick) gsap.ticker.remove(this.tick);
       if (this.ctx) this.ctx.revert();
       this.classList.remove('is-gsap');
